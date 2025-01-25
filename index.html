@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Finals Game Loadout Generator</title>
+    <link rel="stylesheet" href="./assets/main.css" />
+    <script src="./assets/loadout.js"></script>
+  </head>
+  <body>
+    <h1>The Finals Loadout Generator</h1>
+    <textarea id="playerNames" placeholder="Enter player names, one per line"></textarea>
+    <button id="generateButton" class="center">Generate</button>
+    <div class="results" id="results"></div>
+
+    <script>
+      const playerNamesInput = document.getElementById('playerNames')
+      const generateButton = document.getElementById('generateButton')
+      const resultsContainer = document.getElementById('results')
+
+      const classes = data_default
+
+      function encodeData(loadouts) {
+        const minified = loadouts.map((l) =>
+          [l.playerName, l.class, l.specialization, l.weapon, ...l.gadgets].join(','),
+        )
+        return btoa(minified.join(';'))
+      }
+
+      function decodeData(encoded) {
+        const decodedString = atob(encoded)
+        const players = decodedString.split(';')
+
+        const loadouts = []
+        for (const player of players) {
+          const items = player.split(',')
+          loadouts.push({
+            playerName: items[0],
+            class: items[1],
+            specialization: items[2],
+            weapon: items[3],
+            gadgets: items.slice(4),
+          })
+        }
+
+        return loadouts
+      }
+
+      function updateUrl(loadouts) {
+        const encodedData = encodeData(loadouts)
+        const newUrl = `${window.location.origin}${window.location.pathname}?data=${encodedData}`
+        window.history.replaceState(null, '', newUrl)
+      }
+
+      function parseUrlData() {
+        const params = new URLSearchParams(window.location.search)
+        const data = params.get('data')
+        return data ? decodeData(data) : []
+      }
+
+      function getSpecializationHTML(player, classIndex, specialization) {
+        const classObj = data_default[classIndex]
+        return `
+          <span><strong>Specialization:</strong> ${classObj.specializations[specialization]}</span>
+          <button class="inline-button" onclick="rerandomizeSpecialization('${player}', '${classIndex}', this)">Re-randomize</button>
+        `
+      }
+
+      function getWeaponHTML(player, classIndex, weapon) {
+        const classObj = data_default[classIndex]
+        return `
+          <span><strong>Weapon:</strong> ${classObj.weapons[weapon]}</span>
+          <button class="inline-button" onclick="rerandomizeWeapon('${player}', '${classIndex}', this)">Re-randomize</button>
+        `
+      }
+
+      function getGadgetsHTML(player, classIndex, gadgets) {
+        const classObj = data_default[classIndex]
+        return `
+          <span><strong>Gadgets:</strong> ${gadgets.map((gadget) => classObj.gadgets[gadget]).join(', ')}</span>
+          <button class="inline-button" onclick="rerandomizeGadgets('${player}', '${classIndex}', this)">Re-randomize</button>
+        `
+      }
+
+      function renderLoadout(player, loadout, update = true) {
+        const classObj = data_default[loadout.class]
+        const resultDiv = document.createElement('div')
+        resultDiv.className = 'result'
+
+        resultDiv.innerHTML = `
+          <h3>${loadout.playerName}</h3>
+          <h4>${classObj.name}</h4>
+          <p>
+            ${getSpecializationHTML(loadout.playerName, loadout.class, loadout.specialization)}
+          </p>
+          <p>
+            ${getWeaponHTML(loadout.playerName, loadout.class, loadout.weapon)}
+          </p>
+          <p>
+            ${getGadgetsHTML(loadout.playerName, loadout.class, loadout.gadgets)}
+          </p>
+        `
+        resultsContainer.appendChild(resultDiv)
+
+        if (update) {
+          const loadouts = [...parseUrlData(), loadout]
+          updateUrl(loadouts)
+        }
+      }
+
+      function rerandomizeSpecialization(player, classIndex, button) {
+        const classObj = data_default[classIndex]
+        const specialization = getSpecialization(classIndex)
+        const parent = button.parentElement
+        parent.innerHTML = getSpecializationHTML(player, classIndex, specialization)
+        updateLoadout(player, { specialization })
+      }
+
+      function rerandomizeWeapon(player, classIndex, button) {
+        const classObj = data_default[classIndex]
+        const weapon = getWeapon(classIndex)
+        const parent = button.parentElement
+        parent.innerHTML = getWeaponHTML(player, classIndex, weapon)
+        updateLoadout(player, { weapon })
+      }
+
+      function rerandomizeGadgets(player, classIndex, button) {
+        const classObj = data_default[classIndex]
+        const gadgets = []
+        for (let i = 0; i < 3; i++) {
+          gadgets.push(getGadget(classIndex))
+        }
+        const parent = button.parentElement
+        parent.innerHTML = getGadgetsHTML(player, classIndex, gadgets)
+        updateLoadout(player, { gadgets })
+      }
+
+      function updateLoadout(player, updates) {
+        const loadouts = parseUrlData()
+        const loadoutIndex = loadouts.findIndex((l) => l.playerName === player)
+        if (loadoutIndex !== -1) {
+          loadouts[loadoutIndex] = { ...loadouts[loadoutIndex], ...updates }
+          updateUrl(loadouts)
+        }
+      }
+
+      generateButton.addEventListener('click', () => {
+        const playerNames = playerNamesInput.value
+          .split('\n')
+          .map((name) => name.trim())
+          .filter(Boolean)
+
+        const loadouts = []
+        resultsContainer.innerHTML = ''
+
+        playerNames.forEach((player) => {
+          const loadout = generateLoadout(player)
+          loadouts.push(loadout)
+          renderLoadout(player, loadout, false)
+        })
+
+        updateUrl(loadouts)
+      })
+
+      window.addEventListener('DOMContentLoaded', () => {
+        const loadouts = parseUrlData()
+
+        if (loadouts.length > 0) {
+          const playerNames = loadouts.map((loadout) => loadout.playerName).join('\n')
+          playerNamesInput.value = playerNames
+        }
+
+        loadouts.forEach((loadout) => renderLoadout(loadout.playerName, loadout, false))
+      })
+    </script>
+  </body>
+</html>

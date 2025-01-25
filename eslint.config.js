@@ -38,4 +38,8 @@ export default antfu({
     'unicorn/no-new-array': 'off',
   },
   typescript: true,
+  formatters: {
+    css: true,
+    html: true,
+  },
 })

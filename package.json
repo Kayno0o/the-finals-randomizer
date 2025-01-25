@@ -9,9 +9,6 @@
   "peerDependencies": {
     "typescript": "^5.0.0"
   },
-  "dependencies": {
-    "ansi-colors": "^4.1.3"
-  },
   "devDependencies": {
     "@antfu/eslint-config": "^3.16.0",
     "@kaynooo/utils": "^1.2.2",
