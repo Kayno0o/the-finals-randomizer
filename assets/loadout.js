@@ -20,6 +20,15 @@ const data_default = [
   },
 ]
 
+window.maps = {
+  bankit: ['Bernal', 'Fortune Stadium', 'Kyoto', 'Las Vegas', 'Monaco', 'Seoul', 'Skyway Stadium', 'Sys$Horizon'],
+  cashout: ['jsp', 'jsp'],
+  finalround: ['jsp', 'jsp'],
+  powershift: ['jsp', 'jsp'],
+  quickcash: ['jsp', 'jsp'],
+  terminalattack: ['jsp', 'jsp'],
+}
+
 window.data_default = data_default
 
 // utils.ts
@@ -48,11 +57,12 @@ function generateLoadout(player) {
   const classObj = data_default[classIndex]
   const specialization = randomInt(classObj.specializations.length)
   const weapon = randomInt(classObj.weapons.length)
-  const gadgets = Object.keys([...new Array(classObj.gadgets.length)])
-  for (let i = gadgets.length - 1; i > 0; i--) {
-    const j = randomInt(0, i + 1);
-    [gadgets[i], gadgets[j]] = [gadgets[j], gadgets[i]]
-  }
+
+  const gadgetsArr = Object.keys([...new Array(classObj.gadgets.length)])
+  const gadgets = []
+  for (let i = 0; i < 3; ++i)
+    gadgets.push(gadgetsArr.splice(randomInt(gadgetsArr.length), 1)[0])
+
   return {
     playerName: player,
     class: classIndex,

@@ -4,10 +4,16 @@
   "module": "index.ts",
   "scripts": {
     "lint:fix": "eslint --fix",
-    "start": "bun index.ts"
+    "start": "bun index.ts",
+    "css:watch": "unocss *.html assets/*.js --watch -o ./assets/uno.css"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@iconify-json/material-symbols": "^1.2.13",
+    "@unocss/cli": "^65.4.3",
+    "unocss": "^65.4.3"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^3.16.0",

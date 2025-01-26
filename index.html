@@ -3,15 +3,44 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>The Finals Game Loadout Generator</title>
+    <title>The Finals Loadout Generator</title>
+    <link rel="stylesheet" href="./node_modules/@unocss/reset/tailwind.css" />
     <link rel="stylesheet" href="./assets/main.css" />
+    <link rel="stylesheet" href="./assets/uno.css" />
     <script src="./assets/loadout.js"></script>
   </head>
-  <body>
-    <h1>The Finals Loadout Generator</h1>
-    <textarea id="playerNames" placeholder="Enter player names, one per line"></textarea>
-    <button id="generateButton" class="center">Generate</button>
-    <div class="results" id="results"></div>
+  <body class="w-full max-w-svw min-h-screen font-sans pb-8 bg-dark text-light relative content-wrapper mt-8">
+    <h1 class="h1">The Finals Loadout Generator</h1>
+    <div class="grid grid-cols-[1fr_4fr] gap-4">
+      <div class="flex flex-col gap-4">
+        <label>
+          Player names
+          <textarea
+            class="input h-96 border-black border border-solid"
+            id="playerNames"
+            placeholder="Enter player names, one per line"
+          ></textarea>
+        </label>
+        <button id="generateButton" class="btn ml-auto">Generate</button>
+      </div>
+
+      <div class="grid grid-cols-3 gap-4 mt-6" id="results"></div>
+    </div>
+
+    <div class="mt-4">
+      <h2>Random Map</h2>
+      <label>
+        Game Mode
+        <select id="gameMode" class="input w-fit">
+          <option value="bankit">Bank It</option>
+          <option value="cashout">Cashout</option>
+          <option value="finalround">Final Round</option>
+          <option value="powershift">Power Shift</option>
+          <option value="quickcash">Quick Cash</option>
+          <option value="terminalattack">Terminal Attack</option>
+        </select>
+      </label>
+    </div>
 
     <script>
       const playerNamesInput = document.getElementById('playerNames')
@@ -61,35 +90,38 @@
       function getSpecializationHTML(player, classIndex, specialization) {
         const classObj = data_default[classIndex]
         return `
-          <span><strong>Specialization:</strong> ${classObj.specializations[specialization]}</span>
-          <button class="inline-button" onclick="rerandomizeSpecialization('${player}', '${classIndex}', this)">Re-randomize</button>
+          <span><strong>Specialization:</strong>
+          <button class="icon-btn i-material-symbols:refresh hover:animate-spin" onclick="rerandomizeSpecialization('${player}', '${classIndex}', this)"></button>
+          <br>- ${classObj.specializations[specialization]}</span>
         `
       }
 
       function getWeaponHTML(player, classIndex, weapon) {
         const classObj = data_default[classIndex]
         return `
-          <span><strong>Weapon:</strong> ${classObj.weapons[weapon]}</span>
-          <button class="inline-button" onclick="rerandomizeWeapon('${player}', '${classIndex}', this)">Re-randomize</button>
+          <span><strong>Weapon:</strong>
+          <button class="icon-btn i-material-symbols:refresh hover:animate-spin" onclick="rerandomizeWeapon('${player}', '${classIndex}', this)"></button>
+          <br>- ${classObj.weapons[weapon]}</span>
         `
       }
 
       function getGadgetsHTML(player, classIndex, gadgets) {
         const classObj = data_default[classIndex]
         return `
-          <span><strong>Gadgets:</strong> ${gadgets.map((gadget) => classObj.gadgets[gadget]).join(', ')}</span>
-          <button class="inline-button" onclick="rerandomizeGadgets('${player}', '${classIndex}', this)">Re-randomize</button>
+          <span><strong>Gadgets:</strong>
+          <button class="icon-btn i-material-symbols:refresh hover:animate-spin" onclick="rerandomizeGadgets('${player}', '${classIndex}', this)"></button>
+          <br>- ${gadgets.map((gadget) => classObj.gadgets[gadget]).join(', ')}</span>
         `
       }
 
       function renderLoadout(player, loadout, update = true) {
         const classObj = data_default[loadout.class]
         const resultDiv = document.createElement('div')
-        resultDiv.className = 'result'
+        resultDiv.className = 'card'
 
         resultDiv.innerHTML = `
-          <h3>${loadout.playerName}</h3>
-          <h4>${classObj.name}</h4>
+          <h3 class="text-2xl font-bold">${loadout.playerName}</h3>
+          <h4 class="text-xl">${classObj.name}</h4>
           <p>
             ${getSpecializationHTML(loadout.playerName, loadout.class, loadout.specialization)}
           </p>
@@ -126,12 +158,12 @@
 
       function rerandomizeGadgets(player, classIndex, button) {
         const classObj = data_default[classIndex]
+        const gadgetsArr = Object.keys([...new Array(classObj.gadgets.length)])
         const gadgets = []
-        for (let i = 0; i < 3; i++) {
-          gadgets.push(getGadget(classIndex))
-        }
+        for (let i = 0; i < 3; ++i) gadgets.push(gadgetsArr.splice(randomInt(gadgetsArr.length), 1)[0])
+
         const parent = button.parentElement
-        parent.innerHTML = getGadgetsHTML(player, classIndex, gadgets)
+        parent.innerHTML = getGadgetsHTML(player, classIndex, gadgets.slice(0, 3))
         updateLoadout(player, { gadgets })
       }
 
