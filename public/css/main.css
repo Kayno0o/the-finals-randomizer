@@ -1,18 +1,16 @@
 :root {
   --color--dark: oklch(19.1% 0 0); /* Deep black */
-  --color--medium: oklch(35.1% 0.047 39.2); /* Rich dark brown */
+  --color--medium: oklch(35.1% 0.067 19.2); /* Rich dark brown */
   --color--light: oklch(90.1% 0.057 84.5); /* Warm sand beige */
-  --color--gray: oklch(48.7% 0.047 18.9); /* Muted reddish-gray */
-  --color--accent: oklch(69.6% 0.196 32.3); /* Bright retro orange-red */
-  --color--card: oklch(35.1% 0.047 39.2); /* Rich brown */
+  --color--accent: oklch(70.41% 0.1438 0.6); /* Bright retro orange-red */
+  --color--card: oklch(30.5% 0.065 12.4); /* Faded vintage ochre-brown */
 }
 
 .light:root {
   --color--dark: oklch(93.9% 0.047 93.9); /* Bright warm cream */
   --color--medium: oklch(78.6% 0.064 74.6); /* Vibrant khaki */
   --color--light: oklch(23.5% 0 0); /* Crisp dark gray */
-  --color--gray: oklch(53.5% 0.079 20); /* Subtle dusty red */
-  --color--accent: oklch(69.6% 0.196 32.3); /* Bright retro orange-red */
+  --color--accent: oklch(60.41% 0.1438 0.6); /* Bright retro orange-red */
   --color--card: oklch(95.7% 0.054 89.9); /* Bold pale beige */
 }
 

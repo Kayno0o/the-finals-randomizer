@@ -52,10 +52,7 @@ function setupThemeToggle() {
     applyTheme(!isLight)
   }
 
-  applyTheme(theme.value === 'light')
-
-  const themeToggle = document.getElementById('theme-toggle')
-  themeToggle?.addEventListener('click', () => {
+  document.getElementById('theme-toggle')?.addEventListener('click', () => {
     if (document.startViewTransition) {
       document.startViewTransition(toggleTheme)
     }

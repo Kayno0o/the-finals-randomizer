@@ -8,10 +8,13 @@ interface Props {
 }
 
 const { title, ...props } = Astro.props
+
+const cookies = Astro.cookies
+const isLight = cookies.get('theme')?.value === 'light'
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" class={isLight ? 'light' : 'dark'}>
   <head>
     <meta charset="UTF-8" />
     <meta name="description" content="Astro description" />

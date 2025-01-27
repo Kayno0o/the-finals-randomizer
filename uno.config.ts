@@ -8,7 +8,7 @@ export default defineConfig({
     presetWebFonts({
       provider: 'google',
       fonts: {
-        sans: 'Poppins:400,500,700',
+        sans: 'Noto Sans:400,500,700,900',
       },
     }),
     presetIcons({
@@ -39,6 +39,7 @@ export default defineConfig({
       'small-btn': 'bg-accent px-2 py-0 rounded-md text-dark text-sm font-bold',
       'icon-btn': 'bg-accent size-4 rounded-md text-dark font-bold',
       'popper': 'w-full z-50 rounded-md mt-1 bg-medium drop-shadow-lg px-2 py-1',
+      'papper': 'border-b-(medium 4) border-r-(medium 4)',
     },
   ],
   rules: [
@@ -53,7 +54,6 @@ export default defineConfig({
       medium: 'var(--color--medium)',
       dark: 'var(--color--dark)',
       light: 'var(--color--light)',
-      gray: 'var(--color--gray)',
       accent: 'var(--color--accent)',
       card: 'var(--color--card)',
     },
