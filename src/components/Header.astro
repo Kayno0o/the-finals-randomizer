@@ -3,8 +3,10 @@ import ThemeSwitcher from './ThemeSwitcher.astro'
 ---
 
 <div class="h-12">
-  <header class="w-full flex items-center bg-light text-dark px-8 h-[inherit] fixed top-0 justify-between z-100 paper">
-    <p class="font-extrabold text-lg">The Finals Randomizer</p>
-    <ThemeSwitcher />
-  </header>
+  <div class="fixed top-0 z-100 w-full h-[inherit]">
+    <header class="relative w-full flex items-center bg-light text-dark px-8 h-[inherit] justify-between backdrop-medium">
+      <p class="font-extrabold text-lg">The Finals Randomizer</p>
+      <ThemeSwitcher />
+    </header>
+  </div>
 </div>

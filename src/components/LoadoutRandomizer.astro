@@ -12,13 +12,14 @@ const loadouts = loadoutsParam ? decodeLoadouts(loadoutsParam) : []
     <label for="playerNames">
       Player names
     </label>
-    <textarea
-      class="input h-96 border-black border border-solid"
-      id="playerNames"
-      placeholder="Enter player names, one per line"
-      autofocus
-    >{loadouts.map(loadout => loadout.playerName).join('\n')}
-</textarea>
+    <div class="relative h-96">
+      <textarea
+        class="input h-full border-black border border-solid"
+        id="playerNames"
+        placeholder="Enter player names, one per line"
+        autofocus
+      >{loadouts.map(loadout => loadout.playerName).join('\n')}</textarea>
+    </div>
     <button id="generateButton" class="btn ml-auto mt-4" onclick="generate">Generate</button>
   </div>
 

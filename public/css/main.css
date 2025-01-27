@@ -1,17 +1,17 @@
 :root {
-  --color--dark: oklch(19.1% 0 0); /* Deep black */
-  --color--medium: oklch(35.1% 0.067 19.2); /* Rich dark brown */
-  --color--light: oklch(90.1% 0.057 84.5); /* Warm sand beige */
-  --color--accent: oklch(70.41% 0.1438 0.6); /* Bright retro orange-red */
-  --color--card: oklch(30.5% 0.065 12.4); /* Faded vintage ochre-brown */
+  --color--dark: oklch(19.1% 0 0);
+  --color--light: oklch(90.1% 0.007 284.5);
+  --color--primary: oklch(55% 0.17 280);
+  --color--accent: oklch(70% 0.17 280);
+  --color--card: oklch(30.5% 0.005 280);
 }
 
 .light:root {
-  --color--dark: oklch(93.9% 0.047 93.9); /* Bright warm cream */
-  --color--medium: oklch(78.6% 0.064 74.6); /* Vibrant khaki */
-  --color--light: oklch(23.5% 0 0); /* Crisp dark gray */
-  --color--accent: oklch(60.41% 0.1438 0.6); /* Bright retro orange-red */
-  --color--card: oklch(95.7% 0.054 89.9); /* Bold pale beige */
+  --color--dark: oklch(93.9% 0.047 93.9);
+  --color--light: oklch(23.5% 0 0);
+  --color--primary: oklch(60% 0.17 70);
+  --color--accent: oklch(50% 0.17 70);
+  --color--card: oklch(84.6% 0.064 74.6);
 }
 
 ::view-transition-new(root) {

@@ -25,35 +25,32 @@ export default defineConfig({
   ],
   shortcuts: [
     {
-      'card': 'relative light:bg-medium bg-card px-4 py-2 rounded-md',
       'content-wrapper': 'container px-6 mx-auto',
       'link': `
         relative text-xl border-solid
-        text-light hover:text-accent transition-color duration-300 
-        after:(no-content h-px w-0 bg-accent absolute bottom-0.5 inset-x-0 inline-block transition-[width] duration-300)
+        text-light hover:text-primary transition-color duration-300 
+        after:(no-content h-px w-0 bg-primary absolute bottom-0.5 inset-x-0 inline-block transition-[width] duration-300)
         hover:after:w-full
       `,
       'h1': 'text-2xl font-medium',
-      'input': 'rounded px-4 py-1.5 w-full text-dark placeholder:text-medium placeholder:font-light font-medium bg-light border-none outline-none',
-      'btn': 'bg-accent px-5 py-1.5 h-fit rounded-md text-dark font-bold',
-      'small-btn': 'bg-accent px-2 py-0 rounded-md text-dark text-sm font-bold',
-      'icon-btn': 'bg-accent size-4 rounded-md text-dark font-bold',
-      'popper': 'w-full z-50 rounded-md mt-1 bg-medium drop-shadow-lg px-2 py-1',
-      'papper': 'border-b-(medium 4) border-r-(medium 4)',
+      'input': 'px-4 py-1.5 w-full text-dark placeholder:text-medium placeholder:font-light font-medium bg-light border-none outline-none',
+      'btn': 'bg-primary px-5 py-1.5 h-fit text-dark font-bold hover:bg-light transition-background-color-300',
+      'card': 'relative light:bg-card bg-card px-4 py-2 backdrop-light',
     },
+    [/backdrop-(\w+)/, ([,c]) => `relative before:(no-content bg-${c} size-full absolute top-2 left-2 -z-2)`],
   ],
   rules: [
     ['no-content', { content: '\'\'' }],
     ['html', {
       'scrollbar-width': 'thin',
-      'scrollbar-color': 'var(--color--accent) var(--color--medium)',
+      'scrollbar-color': 'var(--color--primary) var(--color--card)',
     }],
   ],
   theme: {
     colors: {
-      medium: 'var(--color--medium)',
       dark: 'var(--color--dark)',
       light: 'var(--color--light)',
+      primary: 'var(--color--primary)',
       accent: 'var(--color--accent)',
       card: 'var(--color--card)',
     },
