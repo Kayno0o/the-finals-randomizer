@@ -18,6 +18,8 @@ const loadouts = loadoutsParam ? decodeLoadouts(loadoutsParam) : []
         id="playerNames"
         placeholder="Enter player names, one per line"
         autofocus
+        autocorrect="off"
+        spellcheck="false"
       >{loadouts.map(loadout => loadout.playerName).join('\n')}</textarea>
     </div>
     <button id="generateButton" class="btn ml-auto mt-4" onclick="generate">Generate</button>

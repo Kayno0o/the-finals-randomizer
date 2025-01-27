@@ -15,7 +15,7 @@ const hue = cookies.get('hue')?.value ?? 280
 ---
 
 <!doctype html>
-<html lang="en" class={isLight ? 'light' : 'dark'} style={`--hue: ${hue}`}>
+<html lang="en" class={`${isLight ? 'light' : 'dark'} html`} style={`--hue: ${hue}`}>
   <head>
     <meta charset="UTF-8" />
     <meta name="description" content="Astro description" />
