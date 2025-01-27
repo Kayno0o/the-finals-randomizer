@@ -3,16 +3,20 @@
   "type": "module",
   "module": "index.ts",
   "scripts": {
-    "lint:fix": "eslint --fix",
-    "start": "bun index.ts",
-    "css:watch": "unocss *.html assets/*.js --watch -o ./assets/uno.css"
+    "dev": "astro dev --port 5945 --host 127.0.0.1",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "lint:fix": "eslint --fix"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
   },
   "dependencies": {
+    "@astrojs/node": "^9.0.2",
     "@iconify-json/material-symbols": "^1.2.13",
     "@unocss/cli": "^65.4.3",
+    "astro": "^5.1.10",
     "unocss": "^65.4.3"
   },
   "devDependencies": {
@@ -20,7 +24,9 @@
     "@kaynooo/utils": "^1.2.2",
     "@types/bun": "latest",
     "eslint": "^9.19.0",
+    "eslint-plugin-astro": "^1.3.1",
     "eslint-plugin-format": "^1.0.1",
-    "eslint-plugin-github": "^5.1.5"
+    "eslint-plugin-github": "^5.1.5",
+    "prettier-plugin-astro": "^0.14.1"
   }
 }

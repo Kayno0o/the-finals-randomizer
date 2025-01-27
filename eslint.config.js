@@ -2,9 +2,11 @@ import antfu from '@antfu/eslint-config'
 import github from 'eslint-plugin-github'
 
 export default antfu({
-  ignores: [
-    '**/docs/**',
-  ],
+  typescript: true,
+  astro: true,
+  formatters: {
+    css: true,
+  },
   plugins: {
     github,
   },
@@ -29,17 +31,13 @@ export default antfu({
     'ts/consistent-indexed-object-style': 'error',
     'ts/consistent-type-definitions': 'error',
     'ts/no-confusing-non-null-assertion': 'error',
-    'ts/no-empty-function': 'error',
+    'ts/no-empty-function': 'off',
     'ts/no-empty-interface': 'off',
     'ts/no-inferrable-types': 'error',
     'ts/prefer-for-of': 'error',
     'ts/prefer-function-type': 'error',
     'ts/prefer-namespace-keyword': 'error',
     'unicorn/no-new-array': 'off',
-  },
-  typescript: true,
-  formatters: {
-    css: true,
-    html: true,
+    'no-else-return': ['error', { allowElseIf: false }],
   },
 })

@@ -8,7 +8,7 @@ export default defineConfig({
     presetWebFonts({
       provider: 'google',
       fonts: {
-        sans: 'Lato',
+        sans: 'Montserrat',
       },
     }),
     presetIcons({
@@ -54,9 +54,6 @@ export default defineConfig({
       gray: 'rgb(var(--color--gray))',
       accent: 'rgb(var(--color--accent))',
       card: 'rgb(var(--color--card))',
-    },
-    fontFamily: {
-      sans: '"Roboto", sans-serif',
     },
   },
   variants: [

@@ -1,0 +1,65 @@
+<div id="theme-toggle" class="i-material-symbols:dark-mode p-1.5 size-8 cursor-pointer"></div>
+
+<script>
+  function useCookie(name: string, defaultValue: string) {
+    const getCookies = (): Record<string, string> => {
+      return document.cookie.split('; ').reduce(
+        (acc, curr) => {
+          const [key, value] = curr.split('=')
+          acc[key] = value
+          return acc
+        },
+        {} as Record<string, string>,
+      )
+    }
+
+    const cookies = getCookies()
+
+    return {
+      get value() {
+        return cookies[name] || defaultValue
+      },
+      set value(newValue: string) {
+        document.cookie = `${name}=${newValue}; path=/; max-age=31536000`
+      },
+    }
+  }
+
+  function setupThemeToggle() {
+    const theme = useCookie('theme', 'dark')
+
+    const applyTheme = (isLight: boolean) => {
+      const classList = document.documentElement.classList
+
+      classList.toggle('light', isLight)
+      classList.toggle('dark', !isLight)
+
+      theme.value = isLight ? 'light' : 'dark'
+
+      const themeToggle = document.getElementById('theme-toggle')
+      if (themeToggle) {
+        themeToggle.classList.toggle('i-material-symbols:light-mode', isLight)
+        themeToggle.classList.toggle('i-material-symbols:dark-mode', !isLight)
+      }
+    }
+
+    const toggleTheme = () => {
+      const isLight = document.documentElement.classList.contains('light')
+      applyTheme(!isLight)
+    }
+
+    applyTheme(theme.value === 'light')
+
+    const themeToggle = document.getElementById('theme-toggle')
+    themeToggle?.addEventListener('click', () => {
+      if (document.startViewTransition) {
+        document.startViewTransition(toggleTheme)
+      } else {
+        toggleTheme()
+      }
+    })
+  }
+
+  // Execute theme setup
+  setupThemeToggle()
+</script>

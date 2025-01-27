@@ -1,0 +1,58 @@
+---
+import { decodeLoadouts } from '../utils/loadoutUtils'
+import LoadoutCard from './LoadoutCard.astro'
+
+const url = Astro.url
+const loadoutsParam = url.searchParams.get('loadouts')
+const loadouts = loadoutsParam ? decodeLoadouts(loadoutsParam) : []
+---
+
+<div class="grid grid-cols-[1fr_4fr] gap-4">
+  <div class="grid h-fit">
+    <label for="playerNames">
+      Player names
+    </label>
+    <textarea
+      class="input h-96 border-black border border-solid"
+      id="playerNames"
+      placeholder="Enter player names, one per line"
+      autofocus
+    >{loadouts.map(loadout => loadout.playerName).join('\n')}
+</textarea>
+    <button id="generateButton" class="btn ml-auto mt-4" onclick="generate">Generate</button>
+  </div>
+
+  <div class="grid grid-cols-3 gap-4 mt-6 h-fit">
+    {loadouts.map(loadout => <LoadoutCard loadout={loadout} />)}
+  </div>
+</div>
+
+<script>
+import type { MinifiedLoadoutType } from '../types'
+import { encodeLoadouts, generateLoadout } from '../utils/loadoutUtils'
+
+const playerNamesInput = document.getElementById('playerNames') as HTMLTextAreaElement | null
+const generateButton = document.getElementById('generateButton') as HTMLButtonElement | null
+
+if (playerNamesInput && generateButton) {
+  generateButton?.addEventListener('click', () => {
+    const playerNames = playerNamesInput.value
+      .split('\n')
+      .map(name => name.trim())
+      .filter(Boolean)
+
+    const loadouts: MinifiedLoadoutType[] = []
+
+    for (const player of playerNames) {
+      const loadout = generateLoadout(player)
+      loadouts.push(loadout)
+    }
+
+    const encodedLoadouts = encodeLoadouts(loadouts)
+    const currentUrl = new URL(window.location.href)
+    currentUrl.searchParams.set('loadouts', encodedLoadouts)
+
+    window.location.href = currentUrl.toString()
+  })
+}
+</script>
