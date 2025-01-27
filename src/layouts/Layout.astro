@@ -11,10 +11,11 @@ const { title, ...props } = Astro.props
 
 const cookies = Astro.cookies
 const isLight = cookies.get('theme')?.value === 'light'
+const hue = cookies.get('hue')?.value ?? 280
 ---
 
 <!doctype html>
-<html lang="en" class={isLight ? 'light' : 'dark'}>
+<html lang="en" class={isLight ? 'light' : 'dark'} style={`--hue: ${hue}`}>
   <head>
     <meta charset="UTF-8" />
     <meta name="description" content="Astro description" />

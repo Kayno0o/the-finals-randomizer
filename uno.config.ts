@@ -8,7 +8,7 @@ export default defineConfig({
     presetWebFonts({
       provider: 'google',
       fonts: {
-        sans: 'Noto Sans:400,500,700,900',
+        sans: 'Saira:400,500,700,900',
       },
     }),
     presetIcons({
@@ -34,7 +34,7 @@ export default defineConfig({
       `,
       'h1': 'text-2xl font-medium',
       'input': 'px-4 py-1.5 w-full text-dark placeholder:text-medium placeholder:font-light font-medium bg-light border-none outline-none',
-      'btn': 'bg-primary px-5 py-1.5 h-fit text-dark font-bold hover:bg-light transition-background-color-300',
+      'btn': 'bg-primary px-5 py-1.5 h-fit text-dark font-bold hover:bg-light',
       'card': 'relative light:bg-card bg-card px-4 py-2 backdrop-light',
     },
     [/backdrop-(\w+)/, ([,c]) => `relative before:(no-content bg-${c} size-full absolute top-2 left-2 -z-2)`],

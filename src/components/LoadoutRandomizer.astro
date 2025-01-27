@@ -9,12 +9,12 @@ const loadouts = loadoutsParam ? decodeLoadouts(loadoutsParam) : []
 
 <div class="grid grid-cols-[1fr_4fr] gap-4">
   <div class="grid h-fit">
-    <label for="playerNames">
+    <label for="playerNames" class="text-lg uppercase font-bold">
       Player names
     </label>
     <div class="relative h-96">
       <textarea
-        class="input h-full border-black border border-solid"
+        class="input h-full resize-none border-black border border-solid"
         id="playerNames"
         placeholder="Enter player names, one per line"
         autofocus
@@ -23,8 +23,11 @@ const loadouts = loadoutsParam ? decodeLoadouts(loadoutsParam) : []
     <button id="generateButton" class="btn ml-auto mt-4" onclick="generate">Generate</button>
   </div>
 
-  <div class="grid grid-cols-3 gap-4 mt-6 h-fit">
-    {loadouts.map(loadout => <LoadoutCard loadout={loadout} />)}
+  <div>
+    <p class="text-lg">Loadouts</p>
+    <div class="grid grid-cols-3 gap-4 h-fit">
+      {loadouts.map(loadout => <LoadoutCard loadout={loadout} />)}
+    </div>
   </div>
 </div>
 

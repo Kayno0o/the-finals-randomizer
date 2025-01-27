@@ -1,17 +1,19 @@
 :root {
-  --color--dark: oklch(19.1% 0 0);
-  --color--light: oklch(90.1% 0.007 284.5);
-  --color--primary: oklch(55% 0.17 280);
-  --color--accent: oklch(70% 0.17 280);
-  --color--card: oklch(30.5% 0.005 280);
+  --hue: 280;
+  --color--dark: oklch(20% 0 0);
+  --color--light: oklch(90% 0 0);
+  --color--primary: oklch(75% 0.2 var(--hue));
+  --color--accent: oklch(70% 0.25 var(--hue));
+  --color--card: oklch(30.5% 0 0);
 }
 
 .light:root {
-  --color--dark: oklch(93.9% 0.047 93.9);
-  --color--light: oklch(23.5% 0 0);
-  --color--primary: oklch(60% 0.17 70);
-  --color--accent: oklch(50% 0.17 70);
-  --color--card: oklch(84.6% 0.064 74.6);
+  --hue: 280;
+  --color--dark: oklch(94% 0 0);
+  --color--light: oklch(24% 0 0);
+  --color--primary: oklch(50% 0.15 var(--hue));
+  --color--accent: oklch(45% 0.3 var(--hue));
+  --color--card: oklch(85% 0 0);
 }
 
 ::view-transition-new(root) {

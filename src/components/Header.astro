@@ -1,12 +1,23 @@
 ---
+import HueSlider from './HueSlider.astro'
 import ThemeSwitcher from './ThemeSwitcher.astro'
 ---
 
 <div class="h-12">
   <div class="fixed top-0 z-100 w-full h-[inherit]">
     <header class="relative w-full flex items-center bg-light text-dark px-8 h-[inherit] justify-between backdrop-medium">
-      <p class="font-extrabold text-lg">The Finals Randomizer</p>
+      <p class="font-extrabold text-xl uppercase">The Finals Randomizer</p>
       <ThemeSwitcher />
     </header>
   </div>
 </div>
+
+<!-- top right corner -->
+<div class="bg-accent size-32 rotate-45 fixed top-12 right-0 translate-x-1/2 -translate-y-1/2 [&>div]:hover:block">
+  <div class="hidden absolute top-full w-48 px-8 py-4 bg-dark -left-8">
+    <HueSlider />
+  </div>
+</div>
+
+<!-- bottom left corner -->
+<div class="bg-accent size-32 rotate-45 fixed bottom-0 left-0 -translate-x-1/2 translate-y-1/2"></div>
