@@ -11,10 +11,32 @@ const { loadout } = Astro.props
 const classData = data[loadout.class]
 ---
 
-<div class="card">
-  <h3 class="text-2xl font-bold">{loadout.playerName}</h3>
-  <h4 class="text-xl">{classData.name}</h4>
-  <p><span class="font-bold">Specialization:</span><br>{classData.specializations[loadout.specialization]}</p>
-  <p><span class="font-bold">Weapon:</span><br>{classData.weapons[loadout.weapon]}</p>
-  <p><span class="font-bold">Gadgets:</span><br>{loadout.gadgets.map(gadgetIndex => classData.gadgets[gadgetIndex]).join(', ')}</p>
+<div class="card border border-light/50">
+  <div class="flex items-center justify-between mb-2 border-b pb-2 border-b-light/50">
+    <div class="flex items-center gap-2">
+      <div class="i-material-symbols-light:account-circle size-8"></div>
+      <h3 class="text-2xl font-medium">{loadout.playerName}</h3>
+    </div>
+    <h4 class="text-xl font-medium">{classData.name}</h4>
+  </div>
+  
+  <div class="flex items-center gap-1">
+    <div class="i-material-symbols-light:settings-outline-rounded size-6"></div>
+    <p class="font-medium decoration-underline">Specialization:</p>
+  </div>
+  <ul class="list-disc-inside ml-6"><li>{classData.specializations[loadout.specialization]}</li></ul>
+
+  <div class="flex items-center gap-1">
+    <div class="i-material-symbols-light:swords-outline-rounded size-6"></div>
+    <p class="font-medium decoration-underline">Weapon:</p>
+  </div>
+  <ul class="list-disc-inside ml-6"><li>{classData.weapons[loadout.weapon]}</li></ul>
+
+  <div class="flex items-center gap-1">
+    <div class="i-material-symbols-light:tools-power-drill-outline size-6"></div>
+    <p class="font-medium decoration-underline">Gadgets:</p>
+  </div>
+  <ul class="list-disc-inside ml-6">
+    {loadout.gadgets.map(gadgetIndex => (<li>{classData.gadgets[gadgetIndex]}</li>))}
+  </ul>
 </div>

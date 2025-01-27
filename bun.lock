@@ -6,6 +6,7 @@
       "dependencies": {
         "@astrojs/node": "^9.0.2",
         "@iconify-json/material-symbols": "^1.2.13",
+        "@iconify-json/material-symbols-light": "^1.2.13",
         "@unocss/cli": "^65.4.3",
         "astro": "^5.1.10",
         "unocss": "^65.4.3",
@@ -153,6 +154,8 @@
     "@humanwhocodes/retry": ["@humanwhocodes/retry@0.4.1", "", {}, "sha512-c7hNEllBlenFTHBky65mhq8WD2kbN9Q6gk0bTk8lSBvc554jpXSkST1iePudpt7+A/AQvuHs9EMqjHDXMY1lrA=="],
 
     "@iconify-json/material-symbols": ["@iconify-json/material-symbols@1.2.13", "", { "dependencies": { "@iconify/types": "*" } }, "sha512-7sVem5paCT87e1Hvk9tA2CHcmTSCwlJj6UlhouyNfgAqoC0W/Yj2vA9NFOdjviHgvoHT9kDCEfKxT5tpEMH6qA=="],
+
+    "@iconify-json/material-symbols-light": ["@iconify-json/material-symbols-light@1.2.13", "", { "dependencies": { "@iconify/types": "*" } }, "sha512-UBrmleqXOXU96E1R2SCzx8F0D3gcYAqPjcof49R5mKTqUNRWzciYPHbzvUhkFL6rwjDVQb/D5KErpoTjWN7V3g=="],
 
     "@iconify/types": ["@iconify/types@2.0.0", "", {}, "sha512-+wluvCrRhXrhyOmRDJ3q8mux9JkKy5SJ/v8ol2tu4FVjyYvtEzkc/3pK15ET6RKg4b4w4BmTk1+gsCUhf21Ykg=="],
 

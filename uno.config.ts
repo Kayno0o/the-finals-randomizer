@@ -8,13 +8,15 @@ export default defineConfig({
     presetWebFonts({
       provider: 'google',
       fonts: {
-        sans: 'Montserrat',
+        sans: 'Poppins:400,500,700',
       },
     }),
     presetIcons({
       collections: {
         // eslint-disable-next-line github/no-then
         'material-symbols': () => import('@iconify-json/material-symbols/icons.json').then(iconSet => iconSet.default as IconifyJSON),
+        // eslint-disable-next-line github/no-then
+        'material-symbols-light': () => import('@iconify-json/material-symbols-light/icons.json').then(iconSet => iconSet.default as IconifyJSON),
       },
     }),
   ],
@@ -43,17 +45,17 @@ export default defineConfig({
     ['no-content', { content: '\'\'' }],
     ['html', {
       'scrollbar-width': 'thin',
-      'scrollbar-color': 'rgb(var(--color--accent)) rgb(var(--color--medium))',
+      'scrollbar-color': 'var(--color--accent) var(--color--medium)',
     }],
   ],
   theme: {
     colors: {
-      medium: 'rgb(var(--color--medium))',
-      dark: 'rgb(var(--color--dark))',
-      light: 'rgb(var(--color--light))',
-      gray: 'rgb(var(--color--gray))',
-      accent: 'rgb(var(--color--accent))',
-      card: 'rgb(var(--color--card))',
+      medium: 'var(--color--medium)',
+      dark: 'var(--color--dark)',
+      light: 'var(--color--light)',
+      gray: 'var(--color--gray)',
+      accent: 'var(--color--accent)',
+      card: 'var(--color--card)',
     },
   },
   variants: [
