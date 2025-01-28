@@ -12,17 +12,13 @@ export default defineConfig({
   output: 'server',
   adapter: node({
     mode: 'standalone',
-    allowedHosts: ['the-finals.kevyn.fr'],
   }),
   devToolbar: {
     enabled: true,
   },
-  server: {
-    allowedHosts: ['the-finals.kevyn.fr'],
-  },
   vite: {
     server: {
-      allowedHosts: ['the-finals.kevyn.fr'],
+      allowedHosts: ['the-finals.kevyn.fr', 'the-finals-dev.kevyn.fr'],
     },
   },
 })

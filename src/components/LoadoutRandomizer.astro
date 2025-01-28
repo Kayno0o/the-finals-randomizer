@@ -26,7 +26,7 @@ const loadouts = loadoutsParam ? decodeLoadouts(loadoutsParam) : []
   </div>
 
   <div>
-    <p class="text-lg">Loadouts</p>
+    <h2 class="text-lg uppercase font-bold">Loadouts</h2>
     <div class="grid grid-cols-3 gap-4 h-fit">
       {loadouts.map(loadout => <LoadoutCard loadout={loadout} />)}
     </div>

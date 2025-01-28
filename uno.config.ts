@@ -32,9 +32,9 @@ export default defineConfig({
         after:(no-content h-px w-0 bg-primary absolute bottom-0.5 inset-x-0 inline-block transition-[width] duration-300)
         hover:after:w-full
       `,
-      'h1': 'text-2xl font-medium',
+      'h1': 'text-2xl',
       'input': 'px-4 py-1.5 w-full text-dark placeholder:text-medium placeholder:font-light font-medium bg-light border-none outline-none',
-      'btn': 'bg-primary px-5 py-1.5 h-fit text-dark font-bold hover:bg-light',
+      'btn': 'bg-primary px-5 py-1.5 h-fit text-dark hover:bg-light uppercase',
       'card': 'relative light:bg-card bg-card px-4 py-2 backdrop-light',
     },
     [/backdrop-(\w+)/, ([,c]) => `relative before:(no-content bg-${c} size-full absolute top-2 left-2 -z-2)`],

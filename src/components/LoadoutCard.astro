@@ -12,29 +12,29 @@ const classData = data[loadout.class]
 ---
 
 <div class="card">
-  <div class="flex items-center justify-between mb-2 border-b pb-2 border-b-light/50 text-accent font-bold">
+  <div class="flex items-center justify-between mb-2 border-b pb-2 border-b-light/50 text-accent">
     <div class="flex items-center gap-2">
       <div class="i-material-symbols-light:account-circle size-8"></div>
-      <h3 class="text-2xl">{loadout.playerName}</h3>
+      <h3 class="text-2xl lowercase not-italic">{loadout.playerName}</h3>
     </div>
     <h4 class="text-xl">{classData.name}</h4>
   </div>
 
   <div class="flex items-center gap-1">
     <div class="i-material-symbols-light:settings-outline-rounded size-6"></div>
-    <p class="font-medium decoration-underline">Specialization:</p>
+    <p class="font-normal">Specialization:</p>
   </div>
   <ul class="list-disc-inside ml-6"><li>{classData.specializations[loadout.specialization]}</li></ul>
 
   <div class="flex items-center gap-1">
     <div class="i-material-symbols-light:swords-outline-rounded size-6"></div>
-    <p class="font-medium decoration-underline">Weapon:</p>
+    <p class="font-normal">Weapon:</p>
   </div>
   <ul class="list-disc-inside ml-6"><li>{classData.weapons[loadout.weapon]}</li></ul>
 
   <div class="flex items-center gap-1">
     <div class="i-material-symbols-light:tools-power-drill-outline size-6"></div>
-    <p class="font-medium decoration-underline">Gadgets:</p>
+    <p class="font-normal">Gadgets:</p>
   </div>
   <ul class="list-disc-inside ml-6">
     {loadout.gadgets.map(gadgetIndex => (<li>{classData.gadgets[gadgetIndex]}</li>))}
