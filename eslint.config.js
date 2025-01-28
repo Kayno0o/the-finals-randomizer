@@ -39,5 +39,6 @@ export default antfu({
     'ts/prefer-namespace-keyword': 'error',
     'unicorn/no-new-array': 'off',
     'no-else-return': ['error', { allowElseIf: false }],
+    'unused-imports/no-unused-vars': ['error', { argsIgnorePattern: '^_', caughtErrors: 'none' }],
   },
 })

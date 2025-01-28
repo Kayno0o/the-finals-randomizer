@@ -1,0 +1,44 @@
+---
+const url = Astro.url
+
+const roomCode = url.searchParams.get('room') ?? ''
+---
+<form id="roomCodeForm" class="grid">
+  <label for="roomCode" class="label">Room code</label>
+
+  <div class="flex items-center gap-4">
+    <input
+      class="input resize-none border-black border border-solid uppercase"
+      id="roomCode"
+      placeholder="Enter room code"
+      autofocus={!roomCode}
+      autocorrect="off"
+      spellcheck="false"
+      value={roomCode}
+      disabled={!!roomCode}
+    />
+    {!roomCode && (<button type="submit" class="btn ml-auto shrink-0">Join Room</button>)}
+  </div>
+</form>
+
+<script>
+  function joinRoom(e: SubmitEvent) {
+    e.preventDefault()
+
+    const roomCodeInput = document.getElementById('roomCode') as HTMLInputElement | null
+    if (!roomCodeInput)
+      return
+
+    const sanitizedRoomCode = (roomCodeInput.value ?? '')
+      .toUpperCase()
+      .replace(/[^A-Z0-9]/g, '')
+
+    const currentUrl = new URL(window.location.href)
+    currentUrl.searchParams.set('room', sanitizedRoomCode)
+
+    window.location.href = currentUrl.toString()
+  }
+
+  const form = document.getElementById('roomCodeForm')
+  form?.addEventListener('submit', joinRoom)
+</script>

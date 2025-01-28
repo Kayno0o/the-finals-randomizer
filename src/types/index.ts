@@ -1,5 +1,6 @@
+import type { ElysiaWS } from 'elysia/ws'
+
 export interface LoadoutType {
-  playerName: string
   class: number
   specialization: number
   weapon: number
@@ -7,3 +8,25 @@ export interface LoadoutType {
 }
 
 export type MinifiedLoadoutType = [string, number]
+
+export interface PlayerType {
+  publicId: string
+  name: string
+  loadout: LoadoutType
+  isMaster?: boolean
+}
+
+export interface Player {
+  publicId: string
+  name: string
+  loadout: number
+  isMaster: boolean
+  id: string
+  lastPing: number
+  ws: ElysiaWS
+}
+
+export interface RoomType {
+  map: string
+  players: Player[]
+}

@@ -1,64 +1,161 @@
 ---
-import { decodeLoadouts } from '../utils/loadoutUtils'
+import { randomString } from '@kaynooo/utils'
+import LeaveRoomButton from './LeaveRoomButton.astro'
 import LoadoutCard from './LoadoutCard.astro'
+import RoomCodeForm from './RoomCodeForm.astro'
+
+const cookies = Astro.cookies
+const username = cookies.get('username')?.value ?? ''
+
+let userId = cookies.get('userId')?.value
+if (!userId) {
+  userId = randomString(16)
+  cookies.set('userId', userId)
+}
 
 const url = Astro.url
-const loadoutsParam = url.searchParams.get('loadouts')
-const loadouts = loadoutsParam ? decodeLoadouts(loadoutsParam) : []
+const roomCode = url.searchParams.get('room')
 ---
 
-<div class="grid grid-cols-[1fr_4fr] gap-4">
-  <div class="grid h-fit">
-    <label for="playerNames" class="text-lg uppercase font-bold">
-      Player names
-    </label>
-    <div class="relative h-96">
-      <textarea
-        class="input h-full resize-none border-black border border-solid"
-        id="playerNames"
-        placeholder="Enter player names, one per line"
-        autofocus
-        autocorrect="off"
-        spellcheck="false"
-      >{loadouts.map(loadout => loadout.playerName).join('\n')}</textarea>
+<div class="grid gap-4">
+  <div class="flex gap-8">
+    <RoomCodeForm />
+
+    <form id="usernameForm" class="h-fit grid">
+      <label for="username" class="label">Username</label>
+
+      <div class="flex items-center gap-4">
+        <input
+          class="input resize-none border-black border border-solid"
+          id="username"
+          placeholder="Enter your username"
+          autofocus
+          autocorrect="off"
+          spellcheck="false"
+          value={username}
+        />
+        <button type="submit" class="btn ml-auto">Confirm</button>
+      </div>
+    </form>
+
+    <div class="grow"></div>
+    {roomCode && (<LeaveRoomButton />)}
+  </div>
+
+  {roomCode && (<div class="flex items-center gap-8">
+    <button id="generate-button" class="btn hidden">Generate</button>
+    <div>
+      <h2 class="label">Map</h2>
+      <p id="roomMap" class="font-extrabold" />
     </div>
-    <button id="generateButton" class="btn ml-auto mt-4" onclick="generate">Generate</button>
   </div>
 
   <div>
-    <h2 class="text-lg uppercase font-bold">Loadouts</h2>
-    <div class="grid grid-cols-3 gap-4 h-fit">
-      {loadouts.map(loadout => <LoadoutCard loadout={loadout} />)}
-    </div>
-  </div>
+    <h2 class="label">Loadouts</h2>
+    <div id="loadouts" class="grid grid-cols-3 gap-4 h-fit" />
+    <LoadoutCard />
+  </div>)}
 </div>
 
 <script>
-import type { MinifiedLoadoutType } from '../types'
-import { encodeLoadouts, generateLoadout } from '../utils/loadoutUtils'
+import type { PlayerType } from '../types'
+import data from '../assets/data.json'
+import { useCookie } from '../utils/cookieUtils'
+import { decodeLoadouts } from '../utils/loadoutUtils'
 
-const playerNamesInput = document.getElementById('playerNames') as HTMLTextAreaElement | null
-const generateButton = document.getElementById('generateButton') as HTMLButtonElement | null
+const url = new URL(window.location.href)
+const roomCode = url.searchParams.get('room')
 
-if (playerNamesInput && generateButton) {
+const userId = useCookie('userId', '')
+const username = useCookie('username', '')
+
+const messageQueue: string[] = []
+window.sendMessage = (message: string) => {
+  messageQueue.push(message)
+}
+
+let publicId: string | undefined
+
+if (roomCode) {
+  const ws = new WebSocket(`wss://api-the-finals-dev.kevyn.fr/ws?id=${userId.value}&room=${roomCode}&username=${username.value}`)
+
+  const roomMap = document.getElementById('roomMap')
+
+  const loadoutTemplate = document.getElementById('loadout-card-template')
+  const loadouts = document.getElementById('loadouts')
+
+  const generateButton = document.getElementById('generate-button')
   generateButton?.addEventListener('click', () => {
-    const playerNames = playerNamesInput.value
-      .split('\n')
-      .map(name => name.trim())
-      .filter(Boolean)
+    sendMessage('generate')
+  })
 
-    const loadouts: MinifiedLoadoutType[] = []
+  function generateTemplate(player: PlayerType): string {
+    if (!loadoutTemplate)
+      return ''
+    const classData = data[player.loadout.class]
+    return loadoutTemplate.innerHTML
+      .replace('[isCurrentPlayer]', String(player.publicId === publicId))
+      .replace('[usernameClass]', player.publicId === publicId ? '' : 'text-light underline underline-accent')
+      .replace('[icon]', player.isMaster ? 'i-material-symbols-light:crown' : 'i-material-symbols-light:account-circle text-light')
+      .replace('[username]', player.name)
+      .replace('[class]', classData.name)
+      .replace('[specialization]', classData.specializations[player.loadout.specialization])
+      .replace('[weapon]', classData.weapons[player.loadout.weapon])
+      .replace('[gadgets]', player.loadout.gadgets.map(gadgetIndex => `<li>${classData.gadgets[gadgetIndex]}</li>`).join(''))
+  }
 
-    for (const player of playerNames) {
-      const loadout = generateLoadout(player)
-      loadouts.push(loadout)
+  function playerFromString(value: string): PlayerType {
+    const args = value.split(':')
+    return {
+      publicId: args[0],
+      name: args[1],
+      isMaster: args[2] === 'true',
+      loadout: decodeLoadouts(Number.parseInt(args[3])),
+    }
+  }
+
+  ws.addEventListener('message', (e) => {
+    const [command, ...args] = String(e.data).split(';')
+
+    if (command === 'room') {
+      roomMap && (roomMap.innerHTML = args[0])
+      publicId = args[1]
+
+      const players = args.slice(2).map(playerFromString)
+
+      if (loadouts)
+        loadouts.innerHTML = players.map(generateTemplate).join('')
+
+      const player = players.find(player => player.publicId === publicId)
+
+      generateButton?.classList.toggle('hidden', !player?.isMaster)
     }
 
-    const encodedLoadouts = encodeLoadouts(loadouts)
-    const currentUrl = new URL(window.location.href)
-    currentUrl.searchParams.set('loadouts', encodedLoadouts)
+    if (command === 'ping') {
+      sendMessage('pong')
+    }
+  })
 
-    window.location.href = currentUrl.toString()
+  ws.addEventListener('open', () => {
+    // send missed messages
+    for (const message of messageQueue) ws.send(message)
+
+    window.sendMessage = (message: string) => ws.send(message)
   })
 }
+
+const usernameField = document.getElementById('username') as HTMLInputElement | null
+document.getElementById('usernameForm')?.addEventListener('submit', (e) => {
+  e.preventDefault()
+
+  if (!usernameField)
+    return
+
+  const sanitizedUsername = usernameField.value.replace(/[^A-Z0-9 ]/gi, '')
+
+  username.value = sanitizedUsername
+  usernameField.value = sanitizedUsername
+
+  sendMessage(`username;${sanitizedUsername}`)
+})
 </script>

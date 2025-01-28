@@ -2,39 +2,33 @@ import type { LoadoutType, MinifiedLoadoutType } from '../types'
 import { randomInt, range } from '@kaynooo/utils'
 import json from '../assets/data.json'
 
-export function decodeLoadouts(encoded: string): LoadoutType[] {
-  const decodedString = atob(encoded)
+export function decodeLoadouts(loadout: number): LoadoutType {
+  const loadoutData = loadout
 
-  return decodedString.split(';').map((player) => {
-    const items = player.split(',')
-    const loadoutData = Number.parseInt(items[1], 10)
+  // extract the class (2 bits)
+  const classIndex = (loadoutData >> 18) & 3
 
-    // extract the class (2 bits)
-    const classIndex = (loadoutData >> 18) & 3
+  // extract the specialization (2 bits)
+  const specializationIndex = (loadoutData >> 16) & 3
 
-    // extract the specialization (2 bits)
-    const specializationIndex = (loadoutData >> 16) & 3
+  // extract the weapon (4 bits)
+  const weaponIndex = (loadoutData >> 12) & 15
 
-    // extract the weapon (4 bits)
-    const weaponIndex = (loadoutData >> 12) & 15
+  // extract the gadgets (4 bits each for 3 gadgets)
+  const gadgets: number[] = []
+  for (let i = 0; i < 3; i++) {
+    gadgets.push((loadoutData >> (8 - i * 4)) & 15)
+  }
 
-    // extract the gadgets (4 bits each for 3 gadgets)
-    const gadgets: number[] = []
-    for (let i = 0; i < 3; i++) {
-      gadgets.push((loadoutData >> (8 - i * 4)) & 15)
-    }
-
-    return {
-      playerName: items[0],
-      class: classIndex,
-      specialization: specializationIndex,
-      weapon: weaponIndex,
-      gadgets,
-    }
-  })
+  return {
+    class: classIndex,
+    specialization: specializationIndex,
+    weapon: weaponIndex,
+    gadgets,
+  }
 }
 
-export function generateLoadout(playerName: string): MinifiedLoadoutType {
+export function generateLoadout(): number {
   const classIndex = randomInt(json.length)
   const classData = json[classIndex]
   const specializationIndex = randomInt(classData.specializations.length)
@@ -61,7 +55,7 @@ export function generateLoadout(playerName: string): MinifiedLoadoutType {
     loadoutData |= (gadget & 15) << (8 - idx * 4)
   }
 
-  return [playerName, loadoutData]
+  return loadoutData
 }
 
 export function encodeLoadouts(loadouts: MinifiedLoadoutType[]) {

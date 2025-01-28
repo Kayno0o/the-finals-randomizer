@@ -1,0 +1,14 @@
+<div class="grid">
+  <p aria-hidden="true">&nbsp;</p>
+  <button id="leaveRoom" class="btn bg-error ml-auto">Leave room</button>
+</div>
+
+<script>
+document.getElementById('leaveRoom')?.addEventListener('click', () => {
+  sendMessage('quit')
+  const currentUrl = new URL(window.location.href)
+  currentUrl.searchParams.delete('room')
+
+  window.location.href = currentUrl.toString()
+})
+</script>
