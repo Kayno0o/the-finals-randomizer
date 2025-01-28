@@ -74,10 +74,13 @@ const app = new Elysia()
 
       if (command === 'quit') {
         rooms[room].players = rooms[room].players.filter(player => player.id !== id)
-        rooms[room].players[0].isMaster = true
 
-        if (!rooms[room].players.length)
+        if (!rooms[room].players.length) {
           delete rooms[room]
+          return
+        }
+
+        rooms[room].players[0].isMaster = true
 
         for (const player of rooms[room].players) {
           player.ws.send(getRoomMessage(player, rooms[room]))
