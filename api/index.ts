@@ -6,7 +6,7 @@ import { generateLoadout } from '../src/utils/loadoutUtils'
 const rooms: Record<string, RoomType> = {}
 
 function getRoomMessage(player: Player, room: RoomType) {
-  return `room;${room.map};${player.publicId};${room.players.map(player => `${player.publicId}:${player.name}:${String(player.isMaster ?? false)}:${player.loadout}`).join(';')}`
+  return `room;${room.map};${player.publicId};${room.players.map(player => `${player.publicId}:${player.name}:${Number(player.isMaster ?? false)}:${player.loadout}`).join(';')}`
 }
 
 function getPlayerIndex(id: string, roomCode: string) {

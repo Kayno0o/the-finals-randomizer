@@ -109,7 +109,7 @@ if (roomCode) {
     return {
       publicId: args[0],
       name: args[1],
-      isMaster: args[2] === 'true',
+      isMaster: args[2] === '1',
       loadout: decodeLoadouts(Number.parseInt(args[3])),
     }
   }
