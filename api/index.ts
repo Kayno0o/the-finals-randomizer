@@ -142,7 +142,7 @@ console.log(
   `🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`,
 )
 
-const closeDelay = 60 * 1000
+const closeDelay = 5 * 60 * 1000
 
 setInterval(() => {
   const currentTime = Date.now()
