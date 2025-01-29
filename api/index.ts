@@ -53,6 +53,9 @@ const app = new Elysia()
       }
 
       if (command === 'generate') {
+        if (!player?.isMaster)
+          return
+
         const players = rooms[room].players
         for (const player of players) {
           player.loadout = generateLoadout()
