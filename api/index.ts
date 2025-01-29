@@ -136,7 +136,7 @@ const app = new Elysia()
       ws.send(getRoomMessage(rooms[room].players[playerIndex], rooms[room]))
     },
   })
-  .listen(1600)
+  .listen(import.meta.env.API_PORT)
 
 console.log(
   `🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`,
