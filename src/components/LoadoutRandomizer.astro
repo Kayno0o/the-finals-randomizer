@@ -121,7 +121,14 @@ if (roomCode) {
       roomMap && (roomMap.innerHTML = args[0])
       publicId = args[1]
 
-      const players = args.slice(2).map(playerFromString)
+      // order current user first
+      const players = args.slice(2).map(playerFromString).sort((a, b) => {
+        if (a.publicId === publicId)
+          return -1
+        if (b.publicId === publicId)
+          return 1
+        return 0
+      })
 
       if (loadouts)
         loadouts.innerHTML = players.map(generateTemplate).join('')
