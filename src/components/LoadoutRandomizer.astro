@@ -77,7 +77,12 @@ window.sendMessage = (message: string) => {
 let publicId: string | undefined
 
 if (roomCode) {
-  const ws = new WebSocket(`wss://api-the-finals-dev.kevyn.fr/ws?id=${userId.value}&room=${roomCode}&username=${username.value}`)
+  const currentUrl = new URL(window.location.href)
+  const wsProtocol = currentUrl.protocol === 'https:' ? 'wss://' : 'ws://'
+  const apiHost = `api-${currentUrl.hostname}`
+  const wsUrl = `${wsProtocol}${apiHost}/ws?id=${userId.value}&room=${roomCode}&username=${username.value}`
+
+  const ws = new WebSocket(wsUrl)
 
   const roomMap = document.getElementById('roomMap')
 

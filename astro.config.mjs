@@ -18,7 +18,7 @@ export default defineConfig({
   },
   vite: {
     server: {
-      allowedHosts: ['the-finals.kevyn.fr', 'the-finals-dev.kevyn.fr'],
+      allowedHosts: [import.meta.env.APP_URL],
     },
   },
 })
