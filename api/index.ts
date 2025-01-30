@@ -74,7 +74,10 @@ const app = new Elysia()
       if (command === 'quit') {
         room.players = room.players.filter(player => player.id !== id)
 
-        room.sendAll('removePlayer', id)
+        room.sendAll('removePlayer', player.publicId)
+
+        if (room.players[0]?.setIsMaster(true))
+          room.sendAll('player', room.players[0])
 
         return
       }
