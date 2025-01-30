@@ -2,10 +2,15 @@ import antfu from '@antfu/eslint-config'
 import github from 'eslint-plugin-github'
 
 export default antfu({
-  typescript: true,
   astro: true,
+  stylistic: true,
+  regexp: true,
+  typescript: true,
+  jsx: true,
   formatters: {
+    astro: true,
     css: true,
+    html: true,
   },
   plugins: {
     github,

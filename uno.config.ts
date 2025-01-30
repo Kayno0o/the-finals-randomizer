@@ -59,8 +59,6 @@ export default defineConfig({
   },
   variants: [
     (matcher) => {
-      if (!matcher.match(/^nth-child-[\dn\-]+:/))
-        return matcher
       const regexp = /^nth-child-([\dn\-]+):/
       const match = matcher.match(regexp)
       if (!match)
@@ -69,6 +67,20 @@ export default defineConfig({
       return {
         matcher: matcher.replace(regexp, ''),
         selector: s => `${s}:nth-child(${n})`,
+      }
+    },
+
+    (matcher) => {
+      const regexp = /^parent\b([^:]+):/
+      const match = matcher.match(regexp)
+      if (!match)
+        return matcher
+
+      const c = match[1]!
+
+      return {
+        matcher: matcher.replace(regexp, ''),
+        selector: s => `${c.replaceAll('_', ' ')} ${s}`,
       }
     },
   ],

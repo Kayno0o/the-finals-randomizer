@@ -18,7 +18,7 @@ const roomCode = url.searchParams.get('room')
 ---
 
 <div class="grid gap-4">
-  <div class="flex gap-8">
+  <div class="flex flex-wrap gap-8">
     <RoomCodeForm />
 
     <form id="usernameForm" class="h-fit grid">
@@ -42,23 +42,25 @@ const roomCode = url.searchParams.get('room')
     {roomCode && (<LeaveRoomButton />)}
   </div>
 
-  {roomCode && (<div class="flex items-center gap-8">
-    <button id="generate-button" class="btn hidden">Generate</button>
-    <div>
-      <h2 class="label">Map</h2>
-      <p id="roomMap" class="font-extrabold" />
+  {roomCode && (
+    <div class="flex items-center gap-8">
+      <button id="generate-button" class="btn hidden parent.isAdmin:block">Generate</button>
+      <div>
+        <h2 class="label">Map</h2>
+        <p id="roomMap" class="font-extrabold" />
+      </div>
     </div>
-  </div>
 
-  <div>
-    <h2 class="label">Loadouts</h2>
-    <div id="loadouts" class="grid grid-cols-3 gap-4 h-fit" />
-    <LoadoutCard />
-  </div>)}
+    <div>
+      <h2 class="label">Loadouts</h2>
+      <div id="loadouts" class="grid grid-cols-3 gap-4 h-fit" />
+      <LoadoutCard />
+    </div>
+  )}
 </div>
 
 <script>
-import type { PlayerType } from '../types'
+import type { PublicPlayerType } from '../types'
 import data from '../assets/data.json'
 import { useCookie } from '../utils/cookieUtils'
 import { decodeLoadouts } from '../utils/loadoutUtils'
@@ -94,13 +96,16 @@ if (roomCode) {
     sendMessage('generate')
   })
 
-  function generateTemplate(player: PlayerType): string {
+  function generateTemplate(player: PublicPlayerType): string {
     if (!loadoutTemplate)
       return ''
     const classData = data[player.loadout.class]
     return loadoutTemplate.innerHTML
-      .replace('[isCurrentPlayer]', String(player.publicId === publicId))
-      .replace('[usernameClass]', player.publicId === publicId ? '' : 'text-light underline underline-accent')
+      .replaceAll('[publicId]', player.publicId)
+      .replace('[class]', [
+        player.publicId === publicId ? 'isCurrent' : 'notCurrent',
+        player.afk ? 'isAfk' : 'isOnline',
+      ].join(' '))
       .replace('[icon]', player.isMaster ? 'i-material-symbols-light:crown' : 'i-material-symbols-light:account-circle text-light')
       .replace('[username]', player.name)
       .replace('[class]', classData.name)
@@ -109,42 +114,60 @@ if (roomCode) {
       .replace('[gadgets]', player.loadout.gadgets.map(gadgetIndex => `<li>${classData.gadgets[gadgetIndex]}</li>`).join(''))
   }
 
-  function playerFromString(value: string): PlayerType {
+  function playerFromString(value: string): PublicPlayerType {
     const args = value.split(':')
     return {
       publicId: args[0],
       name: args[1],
       isMaster: args[2] === '1',
-      loadout: decodeLoadouts(Number.parseInt(args[3])),
+      afk: args[3] === '1',
+      loadout: decodeLoadouts(Number.parseInt(args[4])),
     }
+  }
+
+  window.generatePlayer = (publicId: string) => {
+    sendMessage(`generate;${publicId}`)
   }
 
   ws.addEventListener('message', (e) => {
     const [command, ...args] = String(e.data).split(';')
 
-    if (command === 'room') {
-      roomMap && (roomMap.innerHTML = args[0])
-      publicId = args[1]
+    switch (command) {
+      case 'room': {
+        roomMap && (roomMap.innerHTML = args[0])
+        publicId = args[1].split(':')[0]
 
-      // order current user first
-      const players = args.slice(2).map(playerFromString).sort((a, b) => {
-        if (a.publicId === publicId)
-          return -1
-        if (b.publicId === publicId)
-          return 1
-        return 0
-      })
+        // order current user first
+        const players = args.slice(1).map(playerFromString)
 
-      if (loadouts)
-        loadouts.innerHTML = players.map(generateTemplate).join('')
+        if (loadouts)
+          loadouts.innerHTML = players.map(generateTemplate).join('')
 
-      const player = players.find(player => player.publicId === publicId)
+        const player = players.find(player => player.publicId === publicId)
 
-      generateButton?.classList.toggle('hidden', !player?.isMaster)
-    }
+        document.documentElement.classList.toggle('isAdmin', !!player?.isMaster)
 
-    if (command === 'ping') {
-      sendMessage('pong')
+        break
+      }
+
+      case 'player': {
+        const updatedPlayer = playerFromString(args[0])
+        const template = generateTemplate(updatedPlayer)
+
+        const playerCard = document.getElementById(updatedPlayer.publicId)
+        if (playerCard)
+          playerCard.outerHTML = template
+        else
+          loadouts?.append(template)
+
+        break
+      }
+
+      case 'ping': {
+        sendMessage('pong')
+
+        break
+      }
     }
   })
 

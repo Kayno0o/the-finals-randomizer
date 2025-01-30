@@ -31,7 +31,12 @@ const hue = cookies.get('hue')?.value ?? 280
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
   </head>
-  <body class={c('w-full max-w-svw min-h-screen font-sans pb-8 bg-dark text-light relative uppercase italic font-extrabold', props.class)}>
+  <body
+    class={c(
+      'w-full max-w-svw min-h-screen font-sans pb-8 bg-dark text-light relative uppercase italic font-extrabold',
+      props.class,
+    )}
+  >
     <Header />
 
     <slot />

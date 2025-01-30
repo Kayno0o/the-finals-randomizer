@@ -1,40 +1,36 @@
-<div
-  id="theme-toggle"
-  class="i-material-symbols:dark-mode p-1.5 size-8 cursor-pointer"
->
-</div>
+<div id="theme-toggle" class="i-material-symbols:dark-mode p-1.5 size-8 cursor-pointer"></div>
 
 <script>
-import { useCookie } from '../utils/cookieUtils'
+  import { useCookie } from '../utils/cookieUtils'
 
-const theme = useCookie('theme', 'dark')
+  const theme = useCookie('theme', 'dark')
 
-function applyTheme(isLight: boolean) {
-  const classList = document.documentElement.classList
+  function applyTheme(isLight: boolean) {
+    const classList = document.documentElement.classList
 
-  classList.toggle('light', isLight)
-  classList.toggle('dark', !isLight)
+    classList.toggle('light', isLight)
+    classList.toggle('dark', !isLight)
 
-  theme.value = isLight ? 'light' : 'dark'
+    theme.value = isLight ? 'light' : 'dark'
 
-  const themeToggle = document.getElementById('theme-toggle')
-  if (themeToggle) {
-    themeToggle.classList.toggle('i-material-symbols:light-mode', isLight)
-    themeToggle.classList.toggle('i-material-symbols:dark-mode', !isLight)
+    const themeToggle = document.getElementById('theme-toggle')
+    if (themeToggle) {
+      themeToggle.classList.toggle('i-material-symbols:light-mode', isLight)
+      themeToggle.classList.toggle('i-material-symbols:dark-mode', !isLight)
+    }
   }
-}
 
-function toggleTheme() {
-  const isLight = document.documentElement.classList.contains('light')
-  applyTheme(!isLight)
-}
+  function toggleTheme() {
+    const isLight = document.documentElement.classList.contains('light')
+    applyTheme(!isLight)
+  }
 
-document.getElementById('theme-toggle')?.addEventListener('click', () => {
-  if (document.startViewTransition) {
-    document.startViewTransition(toggleTheme)
-  }
-  else {
-    toggleTheme()
-  }
-})
+  document.getElementById('theme-toggle')?.addEventListener('click', () => {
+    if (document.startViewTransition) {
+      document.startViewTransition(toggleTheme)
+    }
+ else {
+      toggleTheme()
+    }
+  })
 </script>

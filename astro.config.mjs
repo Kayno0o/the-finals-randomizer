@@ -1,8 +1,11 @@
 import node from '@astrojs/node'
-
 // @ts-check
 import { defineConfig } from 'astro/config'
+
 import UnoCSS from 'unocss/astro'
+import { loadEnv } from 'vite'
+
+const { APP_URL } = loadEnv(process.env.NODE_ENV, process.cwd(), '')
 
 // https://astro.build/config
 export default defineConfig({
@@ -18,7 +21,7 @@ export default defineConfig({
   },
   vite: {
     server: {
-      allowedHosts: [import.meta.env.APP_URL],
+      allowedHosts: [APP_URL],
     },
   },
 })

@@ -1,4 +1,6 @@
 import type { ElysiaWS } from 'elysia/ws'
+import { getRandomElement, randomString } from '@kaynooo/utils'
+import { generateLoadout } from '../utils/loadoutUtils'
 
 export interface LoadoutType {
   class: number
@@ -9,24 +11,121 @@ export interface LoadoutType {
 
 export type MinifiedLoadoutType = [string, number]
 
-export interface PlayerType {
+export interface PublicPlayerType {
   publicId: string
   name: string
   loadout: LoadoutType
-  isMaster?: boolean
+  isMaster: boolean
+  afk: boolean
 }
 
-export interface Player {
-  publicId: string
+export class Player {
   name: string
-  loadout: number
   isMaster: boolean
   id: string
+  ws?: ElysiaWS
+
+  publicId: string
+  loadout: number
+  afk = false
   lastPing: number
-  ws: ElysiaWS
+
+  constructor(obj: {
+    id: string
+    name: string
+    isMaster: boolean
+    ws?: ElysiaWS
+  }) {
+    this.id = obj.id
+    this.name = obj.name
+    this.isMaster = obj.isMaster
+    this.ws = obj.ws
+
+    this.publicId = randomString(8)
+    this.lastPing = Date.now()
+    this.loadout = generateLoadout()
+  }
+
+  /** @return {boolean} true if value has changed */
+  setAfk(value: boolean): boolean {
+    const previousAfk = this.afk
+    this.afk = value
+
+    return this.afk !== previousAfk
+  }
+
+  /** @return {boolean} true if value has changed */
+  setName(value: string): boolean {
+    const previousName = this.name
+    this.name = value
+
+    return this.name !== previousName
+  }
+
+  /** @return {boolean} true if value has changed */
+  setIsMaster(value: boolean): boolean {
+    const previousIsMaster = this.isMaster
+    this.isMaster = value
+
+    return this.isMaster !== previousIsMaster
+  }
+
+  toString() {
+    return [
+      this.publicId,
+      this.name,
+      Number(this.isMaster),
+      Number(this.afk),
+      this.loadout,
+    ].join(':')
+  }
 }
 
-export interface RoomType {
+const maps = ['bernal', 'fortune stadium', 'kyoto', 'las vegas', 'monaco', 'seoul', 'skyway stadium', 'sys$horizon']
+
+export class Room {
   map: string
-  players: Player[]
+  players: Player[] = []
+
+  constructor() {
+    this.map = getRandomElement(maps)
+  }
+
+  sortPlayers() {
+    this.players.sort((a, b) => {
+      if (a.isMaster)
+        return -1
+      if (b.isMaster)
+        return 1
+      if (a.afk)
+        return 1
+      if (b.afk)
+        return -1
+      return 0
+    })
+  }
+
+  getMessage(player: Player) {
+    const players = [player, ...this.players.filter(p => p.publicId !== player.publicId)]
+
+    return `room;${this.map};${players.map(String).join(';')}`
+  }
+
+  randomizeMap() {
+    this.map = getRandomElement(maps)
+  }
+
+  sendAll(): void
+  sendAll(command: string, message: any): void
+  sendAll(command?: string, message?: any) {
+    const str = (command && message) ? `${command};${message}` : null
+
+    for (const player of this.players) {
+      player.ws?.send(str ?? this.getMessage(player))
+    }
+  }
+
+  getPlayer(id: string) {
+    return this.players?.find(player => player.id === id) ?? undefined
+  }
 }

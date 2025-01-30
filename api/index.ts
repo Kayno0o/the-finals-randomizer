@@ -1,27 +1,8 @@
-import type { Player, RoomType } from '../src/types'
-import { getRandomElement, randomString } from '@kaynooo/utils'
 import { Elysia, t } from 'elysia'
+import { Player, Room } from '../src/types'
 import { generateLoadout } from '../src/utils/loadoutUtils'
 
-const rooms: Record<string, RoomType> = {}
-
-function getRoomMessage(player: Player, room: RoomType) {
-  return `room;${room.map};${player.publicId};${room.players.map(player => `${player.publicId}:${player.name}:${Number(player.isMaster ?? false)}:${player.loadout}`).join(';')}`
-}
-
-function getPlayerIndex(id: string, roomCode: string) {
-  return rooms[roomCode]?.players?.findIndex(player => player.id === id) ?? -1
-}
-
-function getPlayer(id: string, roomCode: string) {
-  return rooms[roomCode]?.players?.find(player => player.id === id) ?? undefined
-}
-
-const maps = ['bernal', 'fortune stadium', 'kyoto', 'las vegas', 'monaco', 'seoul', 'skyway stadium', 'sys$horizon']
-
-function getRandomMap() {
-  return getRandomElement(maps)
-}
+const rooms: Record<string, Room> = {}
 
 const app = new Elysia()
   .ws('/ws', {
@@ -31,41 +12,51 @@ const app = new Elysia()
       username: t.String(),
     }),
     message(ws, message: string) {
-      const { room, id } = ws.data.query
+      const { room: roomCode, id } = ws.data.query
 
-      const player = getPlayer(id, room)
+      const room = rooms[roomCode]
+      if (!room)
+        return
+
+      const player = room.getPlayer(id)
+      if (!player)
+        return
 
       const [command, ...args] = message.split(';')
-
-      if (command === 'getRoom') {
-        player?.ws.send(getRoomMessage(player, rooms[room]))
-        return
-      }
 
       if (command === 'username') {
         if (!player)
           return
 
-        player.name = args[0] ?? player.name
-        for (const player of rooms[room].players) {
-          player.ws.send(getRoomMessage(player, rooms[room]))
-        }
+        if (player.setName(args[0] ?? player.name))
+          room.sendAll('player', player)
       }
 
       if (command === 'generate') {
         if (!player?.isMaster)
           return
 
-        const players = rooms[room].players
+        // generate a single user
+        if (args[0]) {
+          const playerToGenerate = room.players.find(player => player.publicId === args[0])
+
+          if (playerToGenerate) {
+            playerToGenerate.loadout = generateLoadout()
+
+            room.sendAll()
+            return
+          }
+        }
+
+        const players = room.players
         for (const player of players) {
           player.loadout = generateLoadout()
         }
 
-        rooms[room].map = getRandomMap()
+        room.randomizeMap()
+        room.sendAll()
 
-        for (const player of rooms[room].players) {
-          player.ws.send(getRoomMessage(player, rooms[room]))
-        }
+        return
       }
 
       if (command === 'pong') {
@@ -73,114 +64,114 @@ const app = new Elysia()
           return
 
         player.lastPing = Date.now()
+
+        if (player.setAfk(false))
+          room.sendAll('player', player)
+
+        return
       }
 
       if (command === 'quit') {
-        rooms[room].players = rooms[room].players.filter(player => player.id !== id)
+        room.players = room.players.filter(player => player.id !== id)
 
-        if (!rooms[room].players.length) {
-          delete rooms[room]
+        if (!room.players.length) {
+          delete rooms[roomCode]
           return
         }
 
-        rooms[room].players[0].isMaster = true
+        if (!room.players[0].isMaster) {
+          room.players[0].isMaster = true
 
-        for (const player of rooms[room].players) {
-          player.ws.send(getRoomMessage(player, rooms[room]))
+          room.sendAll('player', room.players[0])
         }
       }
     },
     close(ws) {
-      const { id, room } = ws.data.query
-      if (!rooms[room])
+      const { id, room: roomCode } = ws.data.query
+      const room = rooms[roomCode]
+      if (!room)
         return
 
-      const playerIndex = getPlayerIndex(id, room)
-      if (playerIndex < 0)
+      const player = room.getPlayer(id)
+      if (!player)
         return
 
-      rooms[room].players[playerIndex].lastPing = Date.now()
+      player.lastPing = Date.now()
+      player.ws = undefined
+
+      if (player.setAfk(true))
+        room.sendAll('player', player)
     },
     open(ws) {
-      const { id, room, username } = ws.data.query
-      rooms[room] ||= {
-        map: getRandomMap(),
-        players: [],
-      }
+      const { id, room: roomCode, username } = ws.data.query
+      rooms[roomCode] ||= new Room()
+      const room = rooms[roomCode]
 
-      const playerIndex = getPlayerIndex(id, room)
-      if (playerIndex < 0) {
-        const publicId = randomString(8)
-        rooms[room].players.push({
+      const player = room.getPlayer(id)
+
+      if (!player) {
+        const player = new Player({
           id,
-          publicId,
           name: username,
-          loadout: generateLoadout(),
-          isMaster: rooms[room].players.length === 0,
+          isMaster: room.players.filter(player => !player.afk).length === 0,
           ws,
-          lastPing: Date.now(),
         })
+        room.players.push(player)
 
-        for (const player of rooms[room].players) {
-          player.ws.send(getRoomMessage(player, rooms[room]))
-        }
-
+        room.sendAll('player', player)
         return
       }
-
-      const player = rooms[room].players[playerIndex]
 
       player.ws = ws
       player.lastPing = Date.now()
 
-      ws.send(getRoomMessage(rooms[room].players[playerIndex], rooms[room]))
+      if (player.setAfk(false))
+        room.sendAll('player', player)
+      else
+        ws.send(room.getMessage(player))
     },
   })
   .listen(import.meta.env.API_PORT)
 
-console.log(
-  `🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`,
-)
+console.log(`🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`)
 
-const closeDelay = 5 * 60 * 1000
+const afkDelay = 5 * 60 * 1000
+const checkDelay = 30 * 1000
 
 setInterval(() => {
   const currentTime = Date.now()
 
   for (const [key, room] of Object.entries(rooms)) {
-    let hasRemovedUser = false
+    let hasUpdatedUser = false
     for (let i = 0; i < room.players.length; i++) {
       const player = room.players[i]
 
-      if (player.lastPing && currentTime - player.lastPing >= closeDelay) {
-        rooms[key].players.splice(i, 1)
-        i--
-        hasRemovedUser = true
+      if (currentTime - player.lastPing >= afkDelay) {
+        if (player.setAfk(true))
+          hasUpdatedUser = true
       }
       else {
-        rooms[key].players[i].ws.send('ping')
+        rooms[key].players[i].ws?.send('ping')
       }
     }
 
-    if (!hasRemovedUser)
+    console.log('hasUpdatedUser', hasUpdatedUser)
+    if (!hasUpdatedUser)
       continue
 
-    if (room.players.length) {
-      rooms[key].players[0].isMaster = true
-
-      for (const player of rooms[key].players) {
-        player.ws.send(getRoomMessage(player, rooms[key]))
-      }
+    if (room.players.some(player => !player.afk)) {
+      if (room.players[0].setIsMaster(true))
+        room.sendAll()
 
       continue
     }
 
-    // room has no players left
+    // room has no players online left
     delete rooms[key]
   }
 
   for (const key of Object.keys(rooms)) {
-    if (!rooms[key]?.players.length)
+    if (rooms[key].players.every(player => player.afk))
       delete rooms[key]
   }
-}, 30 * 1000)
+}, checkDelay)

@@ -3,6 +3,7 @@ const url = Astro.url
 
 const roomCode = url.searchParams.get('room') ?? ''
 ---
+
 <form id="roomCodeForm" class="grid">
   <label for="roomCode" class="label">Room code</label>
 
@@ -17,7 +18,13 @@ const roomCode = url.searchParams.get('room') ?? ''
       value={roomCode}
       disabled={!!roomCode}
     />
-    {!roomCode && (<button type="submit" class="btn ml-auto shrink-0">Join Room</button>)}
+    {
+      !roomCode && (
+        <button type="submit" class="btn ml-auto shrink-0">
+          Join Room
+        </button>
+      )
+    }
   </div>
 </form>
 
@@ -26,12 +33,9 @@ const roomCode = url.searchParams.get('room') ?? ''
     e.preventDefault()
 
     const roomCodeInput = document.getElementById('roomCode') as HTMLInputElement | null
-    if (!roomCodeInput)
-      return
+    if (!roomCodeInput) return
 
-    const sanitizedRoomCode = (roomCodeInput.value ?? '')
-      .toUpperCase()
-      .replace(/[^A-Z0-9]/g, '')
+    const sanitizedRoomCode = (roomCodeInput.value ?? '').toUpperCase().replace(/[^A-Z0-9]/g, '')
 
     const currentUrl = new URL(window.location.href)
     currentUrl.searchParams.set('room', sanitizedRoomCode)
