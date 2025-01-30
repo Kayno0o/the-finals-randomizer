@@ -44,9 +44,16 @@ const roomCode = url.searchParams.get('room')
 
   {roomCode && (
     <div class="flex items-center gap-8">
-      <button id="generate-button" class="btn hidden parent.isAdmin:block">Generate</button>
+      <button id="generate-button" class="btn hidden parent.isAdmin:block">Generate Room</button>
       <div>
-        <h2 class="label">Map</h2>
+        <div class="flex items-center gap-2">
+          <h2 class="label">Map</h2>
+
+          <div
+            class="i-material-symbols:refresh-sharp hidden size-4 text-accent parent.isAdmin:block hidden cursor-pointer"
+            onclick="reloadMap()"
+          />
+        </div>
         <p id="roomMap" class="font-extrabold" />
       </div>
     </div>
@@ -129,36 +136,97 @@ if (roomCode) {
     sendMessage(`generate;${publicId}`)
   }
 
+  window.removePlayer = (publicId: string) => {
+    sendMessage(`removePlayer;${publicId}`)
+  }
+
+  window.reloadMap = () => {
+    sendMessage('reloadMap')
+  }
+
+  const players: Record<string, PublicPlayerType> = {}
+
+  let sortedPlayers: PublicPlayerType[] = []
+
+  function sortPlayers() {
+    sortedPlayers = Object.values(players).sort((a, b) => {
+      if (a.publicId === publicId)
+        return -1
+      if (b.publicId === publicId)
+        return 1
+
+      if (a.isMaster)
+        return -1
+      if (b.isMaster)
+        return 1
+
+      if (a.afk)
+        return 1
+      if (b.afk)
+        return -1
+
+      return 0
+    })
+  }
+
+  function updateLoadoutsDOM() {
+    sortPlayers()
+
+    if (loadouts)
+      loadouts.innerHTML = sortedPlayers.map(generateTemplate).join('')
+
+    if (publicId) {
+      const player = players[publicId]
+      document.documentElement.classList.toggle('isAdmin', !!player?.isMaster)
+    }
+  }
+
   ws.addEventListener('message', (e) => {
     const [command, ...args] = String(e.data).split(';')
 
     switch (command) {
       case 'room': {
         roomMap && (roomMap.innerHTML = args[0])
-        publicId = args[1].split(':')[0]
+        publicId = args[1]
 
-        // order current user first
-        const players = args.slice(1).map(playerFromString)
+        for (const player of args.slice(2).map(playerFromString)) {
+          players[player.publicId] = player
+        }
 
-        if (loadouts)
-          loadouts.innerHTML = players.map(generateTemplate).join('')
+        updateLoadoutsDOM()
 
-        const player = players.find(player => player.publicId === publicId)
+        break
+      }
 
-        document.documentElement.classList.toggle('isAdmin', !!player?.isMaster)
+      case 'map': {
+        roomMap && (roomMap.innerHTML = args[0])
 
         break
       }
 
       case 'player': {
         const updatedPlayer = playerFromString(args[0])
-        const template = generateTemplate(updatedPlayer)
 
-        const playerCard = document.getElementById(updatedPlayer.publicId)
-        if (playerCard)
-          playerCard.outerHTML = template
-        else
-          loadouts?.append(template)
+        players[updatedPlayer.publicId] = updatedPlayer
+
+        updateLoadoutsDOM()
+
+        break
+      }
+
+      case 'removePlayer': {
+        console.log(publicId, args[0])
+        if (args[0] === publicId) {
+          const currentUrl = new URL(window.location.href)
+          currentUrl.searchParams.delete('room')
+
+          window.location.href = currentUrl.toString()
+          return
+        }
+
+        delete players[args[0]]
+
+        updateLoadoutsDOM()
 
         break
       }

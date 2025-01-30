@@ -33,7 +33,7 @@ export default defineConfig({
         hover:after:w-full
       `,
       'h1': 'text-2xl',
-      'input': 'px-4 py-1.5 w-full text-dark placeholder:text-medium placeholder:font-light font-medium bg-light border-none outline-none disabled:(bg-card text-white)',
+      'input': 'px-4 py-1.5 w-full text-dark placeholder:text-card placeholder:font-light font-medium bg-light border-none outline-none disabled:(bg-card text-white)',
       'btn': 'bg-primary px-5 py-1.5 h-fit text-dark hover:bg-light uppercase',
       'card': 'relative light:bg-card bg-card px-4 py-2 backdrop-light',
       'label': 'text-lg font-medium',

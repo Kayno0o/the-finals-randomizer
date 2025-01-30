@@ -6,12 +6,8 @@ export default antfu({
   stylistic: true,
   regexp: true,
   typescript: true,
+  javascript: true,
   jsx: true,
-  formatters: {
-    astro: true,
-    css: true,
-    html: true,
-  },
   plugins: {
     github,
   },

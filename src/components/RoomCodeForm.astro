@@ -29,20 +29,21 @@ const roomCode = url.searchParams.get('room') ?? ''
 </form>
 
 <script>
-  function joinRoom(e: SubmitEvent) {
-    e.preventDefault()
+function joinRoom(e: SubmitEvent) {
+  e.preventDefault()
 
-    const roomCodeInput = document.getElementById('roomCode') as HTMLInputElement | null
-    if (!roomCodeInput) return
+  const roomCodeInput = document.getElementById('roomCode') as HTMLInputElement | null
+  if (!roomCodeInput)
+    return
 
-    const sanitizedRoomCode = (roomCodeInput.value ?? '').toUpperCase().replace(/[^A-Z0-9]/g, '')
+  const sanitizedRoomCode = (roomCodeInput.value ?? '').toUpperCase().replace(/[^A-Z0-9]/g, '')
 
-    const currentUrl = new URL(window.location.href)
-    currentUrl.searchParams.set('room', sanitizedRoomCode)
+  const currentUrl = new URL(window.location.href)
+  currentUrl.searchParams.set('room', sanitizedRoomCode)
 
-    window.location.href = currentUrl.toString()
-  }
+  window.location.href = currentUrl.toString()
+}
 
-  const form = document.getElementById('roomCodeForm')
-  form?.addEventListener('submit', joinRoom)
+const form = document.getElementById('roomCodeForm')
+form?.addEventListener('submit', joinRoom)
 </script>

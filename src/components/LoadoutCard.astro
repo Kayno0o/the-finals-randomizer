@@ -5,35 +5,43 @@
     >
     </div>
 
-    <div class="flex items-center justify-between mb-2 border-b pb-2 border-b-light/50 text-accent">
-      <div class="flex items-center gap-2">
-        <div class="[icon] size-8"></div>
-        <h3 class="text-2xl capitalize not-italic parent.notCurrent:(text-light underline underline-accent)">
-          [username]
-        </h3>
+    <div class="absolute right-2 bottom-2 flex flex-col gap-2 items-center justify-end">
+      <div
+        class="i-material-symbols:delete-outline-sharp hidden size-7 text-error parent.isAdmin:block !parent.isCurrent:hidden cursor-pointer"
+        onclick="removePlayer('[publicId]')"
+      />
+      <div
+        class="i-material-symbols:refresh-sharp hidden size-7 text-accent parent.isAdmin:block cursor-pointer"
+        onclick="generatePlayer('[publicId]')"
+      />
+    </div>
+
+    <div class="flex items-center gap-2">
+      <div class="[icon] size-8"></div>
+      <h3 class="text-2xl capitalize not-italic parent.isCurrent:text-accent parent.notCurrent:(text-light underline underline-accent)">
+        [username]
+      </h3>
+    </div>
+
+    <div class="border-b my-2 mx-2"></div>
+
+    <div class="flex items-center gap-3">
+      <h4 class="text-xl parent.isCurrent:text-accent">[class]</h4>
+      -
+      <p>[specialization]</p>
+    </div>
+
+    <div class="flex items-center gap-1 mt-2">
+      <div class="i-game-icons:pistol-gun size-6"></div>
+      <p>[weapon]</p>
+    </div>
+
+    <div class="my-2">
+      <div class="flex items-center gap-1">
+        <div class="i-material-symbols-light:tools-power-drill-outline size-6"></div>
+        <p class="font-normal">Gadgets:</p>
       </div>
-      <div class="i-material-symbols-light:refresh hidden parent.isAdmin:block" onclick="generatePlayer('[publicId]')">
-      </div>
+      <ul class="list-disc-inside ml-6">[gadgets]</ul>
     </div>
-
-    <h4 class="text-xl parent.isCurrent:text-accent">[class]</h4>
-
-    <div class="flex items-center gap-1">
-      <div class="i-material-symbols-light:settings-outline-rounded size-6"></div>
-      <p class="font-normal">Specialization:</p>
-    </div>
-    <ul class="list-disc-inside ml-6"><li>[specialization]</li></ul>
-
-    <div class="flex items-center gap-1">
-      <div class="i-material-symbols-light:swords-outline-rounded size-6"></div>
-      <p class="font-normal">Weapon:</p>
-    </div>
-    <ul class="list-disc-inside ml-6"><li>[weapon]</li></ul>
-
-    <div class="flex items-center gap-1">
-      <div class="i-material-symbols-light:tools-power-drill-outline size-6"></div>
-      <p class="font-normal">Gadgets:</p>
-    </div>
-    <ul class="list-disc-inside ml-6">[gadgets]</ul>
   </div>
 </template>

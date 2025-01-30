@@ -5,7 +5,7 @@
   --color--primary: oklch(75% 0.2 var(--hue));
   --color--accent: oklch(70% 0.25 var(--hue));
   --color--card: oklch(30.5% 0 0);
-  --color--error: oklch(80% 0.25 calc(180 - var(--hue)));
+  --color--error: oklch(80% 0.35 calc(var(--hue) - 180));
 }
 
 .light:root {
@@ -15,7 +15,7 @@
   --color--primary: oklch(50% 0.15 var(--hue));
   --color--accent: oklch(45% 0.3 var(--hue));
   --color--card: oklch(85% 0 0);
-  --color--error: oklch(60% 0.15 calc(180 - var(--hue)));
+  --color--error: oklch(60% 0.25 calc(var(--hue) - 180));
 }
 
 ::view-transition-group(root) {

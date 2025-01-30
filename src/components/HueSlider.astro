@@ -1,30 +1,31 @@
 <input type="range" id="hue-slider" min="0" max="360" step="1" />
 
 <script>
-  import { useCookie } from '../utils/cookieUtils'
+import { useCookie } from '../utils/cookieUtils'
 
-  const hue = useCookie('hue', '280')
+const hue = useCookie('hue', '280')
 
-  function updateHue(newHue: string) {
-    document.documentElement.style.setProperty('--hue', `${newHue}`)
-    hue.value = newHue
-  }
+function updateHue(newHue: string) {
+  document.documentElement.style.setProperty('--hue', `${newHue}`)
+  hue.value = newHue
+}
 
-  // Update hue from slider input
-  const hueSlider = document.getElementById('hue-slider') as HTMLInputElement | null
-  if (hueSlider) {
-    hueSlider.value = hue.value
-    hueSlider.addEventListener('input', (e) => {
-      if (!(e.target instanceof HTMLInputElement)) return
+// Update hue from slider input
+const hueSlider = document.getElementById('hue-slider') as HTMLInputElement | null
+if (hueSlider) {
+  hueSlider.value = hue.value
+  hueSlider.addEventListener('input', (e) => {
+    if (!(e.target instanceof HTMLInputElement))
+      return
 
-      const newHue = e.target.value
-      updateHue(newHue)
-    })
-  }
+    const newHue = e.target.value
+    updateHue(newHue)
+  })
+}
 
-  // Set the initial theme and hue
-  const initialHue = hue.value
-  document.documentElement.style.setProperty('--hue', `${initialHue}`)
+// Set the initial theme and hue
+const initialHue = hue.value
+document.documentElement.style.setProperty('--hue', `${initialHue}`)
 </script>
 
 <style>

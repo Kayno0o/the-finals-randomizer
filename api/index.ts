@@ -43,7 +43,7 @@ const app = new Elysia()
           if (playerToGenerate) {
             playerToGenerate.loadout = generateLoadout()
 
-            room.sendAll()
+            room.sendAll('player', playerToGenerate)
             return
           }
         }
@@ -74,16 +74,27 @@ const app = new Elysia()
       if (command === 'quit') {
         room.players = room.players.filter(player => player.id !== id)
 
-        if (!room.players.length) {
-          delete rooms[roomCode]
+        room.sendAll('removePlayer', id)
+
+        return
+      }
+
+      if (command === 'removePlayer') {
+        if (!player?.isMaster)
           return
-        }
 
-        if (!room.players[0].isMaster) {
-          room.players[0].isMaster = true
+        const playerId = args[0]
+        if (!playerId)
+          return
 
-          room.sendAll('player', room.players[0])
-        }
+        room.sendAll('removePlayer', playerId)
+        room.players = room.players.filter(player => player.publicId !== playerId)
+        return
+      }
+
+      if (command === 'reloadMap') {
+        room.randomizeMap()
+        room.sendAll('map', room.map)
       }
     },
     close(ws) {
@@ -97,13 +108,19 @@ const app = new Elysia()
         return
 
       player.lastPing = Date.now()
-      player.ws = undefined
 
-      if (player.setAfk(true))
+      if (player.setAfk(true)) {
+        room.sortPlayers()
+
         room.sendAll('player', player)
+
+        if (room.players[0].setIsMaster(true))
+          room.sendAll('player', room.players[0])
+      }
     },
     open(ws) {
       const { id, room: roomCode, username } = ws.data.query
+
       rooms[roomCode] ||= new Room()
       const room = rooms[roomCode]
 
@@ -116,62 +133,62 @@ const app = new Elysia()
           isMaster: room.players.filter(player => !player.afk).length === 0,
           ws,
         })
+
+        // send player to all before adding player to room to avoid player to receive two data at the same time
+        room.sendAll('player', player)
         room.players.push(player)
 
-        room.sendAll('player', player)
+        ws.send(room.getMessage(player))
+
         return
       }
 
       player.ws = ws
       player.lastPing = Date.now()
 
+      ws.send(room.getMessage(player))
+
       if (player.setAfk(false))
         room.sendAll('player', player)
-      else
-        ws.send(room.getMessage(player))
     },
   })
   .listen(import.meta.env.API_PORT)
 
 console.log(`🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`)
 
-const afkDelay = 5 * 60 * 1000
+const afkDelay = 30 * 1000
 const checkDelay = 30 * 1000
 
 setInterval(() => {
   const currentTime = Date.now()
 
   for (const [key, room] of Object.entries(rooms)) {
-    let hasUpdatedUser = false
-    for (let i = 0; i < room.players.length; i++) {
-      const player = room.players[i]
+    let hasOnlinePlayer = false
+
+    for (const player of room.players) {
+      if (player.afk)
+        continue
 
       if (currentTime - player.lastPing >= afkDelay) {
-        if (player.setAfk(true))
-          hasUpdatedUser = true
+        player.setAfk(true)
+        player.setIsMaster(false)
+        continue
       }
-      else {
-        rooms[key].players[i].ws?.send('ping')
-      }
+
+      player.ws?.send('ping')
+      hasOnlinePlayer = true
     }
 
-    console.log('hasUpdatedUser', hasUpdatedUser)
-    if (!hasUpdatedUser)
-      continue
-
-    if (room.players.some(player => !player.afk)) {
-      if (room.players[0].setIsMaster(true))
-        room.sendAll()
-
-      continue
-    }
-
-    // room has no players online left
-    delete rooms[key]
-  }
-
-  for (const key of Object.keys(rooms)) {
-    if (rooms[key].players.every(player => player.afk))
+    if (!hasOnlinePlayer) {
+      // room has no players online left
       delete rooms[key]
+
+      continue
+    }
+
+    room.sortPlayers()
+
+    if (room.players[0].setIsMaster(true))
+      room.sendAll()
   }
 }, checkDelay)

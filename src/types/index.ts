@@ -51,6 +51,9 @@ export class Player {
     const previousAfk = this.afk
     this.afk = value
 
+    if (this.afk)
+      this.ws = undefined
+
     return this.afk !== previousAfk
   }
 
@@ -106,9 +109,7 @@ export class Room {
   }
 
   getMessage(player: Player) {
-    const players = [player, ...this.players.filter(p => p.publicId !== player.publicId)]
-
-    return `room;${this.map};${players.map(String).join(';')}`
+    return `room;${this.map};${player.publicId};${this.players.map(String).join(';')}`
   }
 
   randomizeMap() {
@@ -118,7 +119,7 @@ export class Room {
   sendAll(): void
   sendAll(command: string, message: any): void
   sendAll(command?: string, message?: any) {
-    const str = (command && message) ? `${command};${message}` : null
+    const str = (command && message) ? `${command};${Array.isArray(message) ? message.join(';') : message}` : null
 
     for (const player of this.players) {
       player.ws?.send(str ?? this.getMessage(player))

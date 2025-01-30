@@ -25,6 +25,7 @@
   },
   "devDependencies": {
     "@antfu/eslint-config": "^4.1.0",
+    "@iconify-json/game-icons": "^1.2.1",
     "@kaynooo/utils": "^1.2.6",
     "@types/bun": "^1.2.1",
     "eslint": "^9.19.0",
