@@ -44,13 +44,13 @@ const roomCode = url.searchParams.get('room')
 
   {roomCode && (
     <div class="flex items-center gap-8">
-      <button id="generate-button" class="btn hidden parent.isAdmin:block">Generate Room</button>
+      <button id="generate-button" class="btn hidden adminOnly">Generate Room</button>
       <div>
         <div class="flex items-center gap-2">
           <h2 class="label">Map</h2>
 
           <div
-            class="i-material-symbols:refresh-sharp hidden size-4 text-accent parent.isAdmin:block hidden cursor-pointer"
+            class="i-material-symbols:refresh-sharp hidden size-4 text-accent adminOnly cursor-pointer"
             onclick="reloadMap()"
           />
         </div>
@@ -65,6 +65,12 @@ const roomCode = url.searchParams.get('room')
     </div>
   )}
 </div>
+
+<style>
+  .isAdmin .adminOnly {
+    display: block;
+  }
+</style>
 
 <script>
 import type { PublicPlayerType } from '../types'
