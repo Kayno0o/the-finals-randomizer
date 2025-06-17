@@ -1,6 +1,6 @@
 import type { LoadoutType, MinifiedLoadoutType } from '../types'
 import { randomInt, range } from '@kaynooo/utils'
-import json from '../assets/data.json'
+import { classes } from '../assets/loadouts.ts'
 
 export function decodeLoadouts(loadout: number): LoadoutType {
   const loadoutData = loadout
@@ -29,8 +29,8 @@ export function decodeLoadouts(loadout: number): LoadoutType {
 }
 
 export function generateLoadout(): number {
-  const classIndex = randomInt(json.length)
-  const classData = json[classIndex]
+  const classIndex = randomInt(classes.length)
+  const classData = classes[classIndex]
   const specializationIndex = randomInt(classData.specializations.length)
   const weaponIndex = randomInt(classData.weapons.length)
   const gadgetsData = range(classData.gadgets.length)

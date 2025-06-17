@@ -26,22 +26,26 @@
     <div class="border-b my-2 mx-2"></div>
 
     <div class="flex items-center gap-3">
-      <h4 class="text-xl parent.isCurrent:text-accent">[class]</h4>
+      <h4 class="text-xl parent.isCurrent:text-accent">[loadoutClass]</h4>
       -
-      <p>[specialization]</p>
+      <div class="flex items-center gap-2">
+        <i class="[loadoutSpecializationIcon]" />
+        <p>[loadoutSpecialization]</p>
+      </div>
     </div>
 
     <div class="flex items-center gap-1 mt-2">
-      <div class="i-game-icons:pistol-gun size-6"></div>
-      <p>[weapon]</p>
+      <div class="[loadoutWeaponIcon] size-6"></div>
+      <p>[loadoutWeapon]</p>
     </div>
 
     <div class="my-2">
-      <div class="flex items-center gap-1">
-        <div class="i-material-symbols-light:tools-power-drill-outline size-6"></div>
-        <p class="font-normal">Gadgets:</p>
-      </div>
-      <ul class="list-disc-inside ml-6">[gadgets]</ul>
+      <p class="font-normal">Gadgets:</p>
+      <ul class="ml-3">
+        <li><div class="flex items-center gap-2"><i class="[loadoutGadget1Icon]" />[loadoutGadget1]</div></li>
+        <li><div class="flex items-center gap-2"><i class="[loadoutGadget2Icon]" />[loadoutGadget2]</div></li>
+        <li><div class="flex items-center gap-2"><i class="[loadoutGadget3Icon]" />[loadoutGadget3]</div></li>
+      </ul>
     </div>
   </div>
 </template>

@@ -20,6 +20,18 @@ export interface PublicPlayerType {
 }
 
 export class Player {
+  id: string
+  publicId: string
+
+  constructor(obj: {
+    id: string
+  }) {
+    this.id = obj.id
+    this.publicId = randomString(8)
+  }
+}
+
+export class RoomPlayer {
   name: string
   isMaster: boolean
   id: string
@@ -32,16 +44,17 @@ export class Player {
 
   constructor(obj: {
     id: string
+    publicId: string
     name: string
     isMaster: boolean
     ws?: ElysiaWS
   }) {
     this.id = obj.id
+    this.publicId = obj.publicId
     this.name = obj.name
     this.isMaster = obj.isMaster
     this.ws = obj.ws
 
-    this.publicId = randomString(8)
     this.lastPing = Date.now()
     this.loadout = generateLoadout()
   }
@@ -88,7 +101,7 @@ const maps = ['bernal', 'fortune stadium', 'kyoto', 'las vegas', 'monaco', 'seou
 
 export class Room {
   map: string
-  players: Player[] = []
+  players: RoomPlayer[] = []
 
   constructor() {
     this.map = getRandomElement(maps)
@@ -108,7 +121,7 @@ export class Room {
     })
   }
 
-  getMessage(player: Player) {
+  getMessage(player: RoomPlayer) {
     return `room;${this.map};${player.publicId};${this.players.map(String).join(';')}`
   }
 

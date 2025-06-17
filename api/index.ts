@@ -1,8 +1,13 @@
 import { Elysia, t } from 'elysia'
-import { Player, Room } from '../src/types'
+import { Player, Room, RoomPlayer } from '../src/types'
 import { generateLoadout } from '../src/utils/loadoutUtils'
 
+const args = process.argv.slice(2)
+const portIndex = args.indexOf('--port')
+const port = portIndex !== -1 && args[portIndex + 1] ? Number(args[portIndex + 1]) : (import.meta.env.API_PORT ?? 3000)
+
 const rooms: Record<string, Room> = {}
+const players: Record<string, Player> = {}
 
 const app = new Elysia()
   .ws('/ws', {
@@ -127,35 +132,39 @@ const app = new Elysia()
       rooms[roomCode] ||= new Room()
       const room = rooms[roomCode]
 
-      const player = room.getPlayer(id)
+      players[id] ||= new Player({ id })
+      const player = players[id]
 
-      if (!player) {
-        const player = new Player({
+      const roomPlayer = room.getPlayer(id)
+
+      if (!roomPlayer) {
+        const newPlayer = new RoomPlayer({
           id,
+          publicId: player.publicId,
           name: username,
           isMaster: room.players.filter(player => !player.afk).length === 0,
           ws,
         })
 
         // send player to all before adding player to room to avoid player to receive two data at the same time
-        room.sendAll('player', player)
-        room.players.push(player)
+        room.sendAll('player', newPlayer)
+        room.players.push(newPlayer)
 
-        ws.send(room.getMessage(player))
+        ws.send(room.getMessage(newPlayer))
 
         return
       }
 
-      player.ws = ws
-      player.lastPing = Date.now()
+      roomPlayer.ws = ws
+      roomPlayer.lastPing = Date.now()
 
-      ws.send(room.getMessage(player))
+      ws.send(room.getMessage(roomPlayer))
 
-      if (player.setAfk(false))
-        room.sendAll('player', player)
+      if (roomPlayer.setAfk(false))
+        room.sendAll('player', roomPlayer)
     },
   })
-  .listen(import.meta.env.API_PORT)
+  .listen(port)
 
 console.log(`🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`)
 

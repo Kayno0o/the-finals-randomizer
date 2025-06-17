@@ -6,7 +6,7 @@ import { useCookie } from '../utils/cookieUtils'
 const hue = useCookie('hue', '280')
 
 function updateHue(newHue: string) {
-  document.documentElement.style.setProperty('--hue', `${newHue}`)
+  document.documentElement.style.setProperty('--hue', String(newHue))
   hue.value = newHue
 }
 
@@ -25,7 +25,7 @@ if (hueSlider) {
 
 // Set the initial theme and hue
 const initialHue = hue.value
-document.documentElement.style.setProperty('--hue', `${initialHue}`)
+document.documentElement.style.setProperty('--hue', String(initialHue))
 </script>
 
 <style>

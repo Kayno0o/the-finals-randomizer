@@ -20,6 +20,11 @@ export default defineConfig({
       },
     }),
   ],
+  content: {
+    pipeline: {
+      include: [/\.(vue|svelte|[jt]sx?|mdx?|astro|elm|php|phtml|html)($|\?)/],
+    },
+  },
   transformers: [
     transformerVariantGroup(),
   ],
@@ -35,10 +40,15 @@ export default defineConfig({
       'h1': 'text-2xl',
       'input': 'px-4 py-1.5 w-full text-dark placeholder:text-card placeholder:font-light font-medium bg-light border-none outline-none disabled:(bg-card text-white)',
       'btn': 'bg-primary px-5 py-1.5 h-fit text-dark hover:bg-light uppercase',
-      'card': 'relative light:bg-card bg-card px-4 py-2 backdrop-light',
+      'card': 'relative light:bg-card bg-card px-4 py-2 pixel-backdrop-light',
       'label': 'text-lg font-medium',
+      'backdrop': `
+        relative
+        before:(no-content bg-light size-[calc(100%_+_.5rem)] absolute top-0 left-0 -z-2 cut-tr-.5rem)
+        after:(no-content bg-light op-20 size-[calc(100%_+_.5rem)] absolute top-0 left-0 -z-2 cut-bl-.5rem)
+      `,
     },
-    [/backdrop-(\w+)/, ([,c]) => `relative before:(no-content bg-${c} size-full absolute top-2 left-2 -z-2)`],
+    [/pixel-backdrop-(\w+)/, ([,c]) => `relative before:(no-content bg-${c} size-full absolute top-2 left-2 -z-2)`],
   ],
   rules: [
     ['no-content', { content: '\'\'' }],
@@ -46,6 +56,16 @@ export default defineConfig({
       'scrollbar-width': 'thin',
       'scrollbar-color': 'var(--color--primary) var(--color--card)',
     }],
+    [/cut-bl-([\w.]+)/, ([,size]) => ({
+      'clip-path': `polygon(0 0, 0 calc(100% - ${size}), ${size} 100%, 100% 100%, calc(100% - ${size}) calc(100% - ${size}), 0 0)`,
+    })],
+    [/cut-tr-([\w.]+)/, ([,size]) => ({
+      'clip-path': `polygon(0 0, calc(100% - ${size}) 0, 100% ${size}, 100% 100%, calc(100% - ${size}) calc(100% - ${size}), 0 0)`,
+    })],
+    ['stroke-text-thin', { '-webkit-stroke-text-width': 'thin' }],
+    ['stroke-text-medium', { '-webkit-stroke-text-width': 'medium' }],
+    ['stroke-text-thick', { '-webkit-stroke-text-width': 'thick' }],
+    ['stroke-text-none', { '-webkit-stroke-text-width': '0px' }],
   ],
   theme: {
     colors: {

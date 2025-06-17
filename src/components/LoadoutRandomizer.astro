@@ -68,9 +68,8 @@ const roomCode = url.searchParams.get('room')
 
 <script>
 import type { PublicPlayerType } from '../types'
-import data from '../assets/data.json'
-import { useCookie } from '../utils/cookieUtils'
-import { decodeLoadouts } from '../utils/loadoutUtils'
+import { classes, gadgets as dataGadgets, specializations, weapons } from '../assets/loadouts.ts'
+import { decodeLoadouts, html, useCookie } from '../utils'
 
 const url = new URL(window.location.href)
 const roomCode = url.searchParams.get('room')
@@ -88,7 +87,7 @@ let publicId: string | undefined
 if (roomCode) {
   const currentUrl = new URL(window.location.href)
   const wsProtocol = currentUrl.protocol === 'https:' ? 'wss://' : 'ws://'
-  const apiHost = `api-${currentUrl.hostname}`
+  const apiHost = currentUrl.hostname
   const wsUrl = `${wsProtocol}${apiHost}/ws?id=${userId.value}&room=${roomCode}&username=${username.value}`
 
   const ws = new WebSocket(wsUrl)
@@ -106,19 +105,34 @@ if (roomCode) {
   function generateTemplate(player: PublicPlayerType): string {
     if (!loadoutTemplate)
       return ''
-    const classData = data[player.loadout.class]
-    return loadoutTemplate.innerHTML
-      .replaceAll('[publicId]', player.publicId)
-      .replace('[class]', [
+
+    const classData = classes[player.loadout.class]
+    const loadout = player.loadout
+
+    const spe = specializations[classData.specializations[loadout.specialization]]
+    const weapon = weapons[classData.weapons[loadout.weapon]]
+    const gadgets = loadout.gadgets.map(gadget => dataGadgets[classData.gadgets[gadget]])
+
+    return html(loadoutTemplate.innerHTML, {
+      publicId: player.publicId,
+      class: [
         player.publicId === publicId ? 'isCurrent' : 'notCurrent',
         player.afk ? 'isAfk' : 'isOnline',
-      ].join(' '))
-      .replace('[icon]', player.isMaster ? 'i-material-symbols-light:crown' : 'i-material-symbols-light:account-circle text-light')
-      .replace('[username]', player.name)
-      .replace('[class]', classData.name)
-      .replace('[specialization]', classData.specializations[player.loadout.specialization])
-      .replace('[weapon]', classData.weapons[player.loadout.weapon])
-      .replace('[gadgets]', player.loadout.gadgets.map(gadgetIndex => `<li>${classData.gadgets[gadgetIndex]}</li>`).join(''))
+      ].join(' '),
+      icon: player.isMaster ? 'i-material-symbols-light:crown' : 'i-material-symbols-light:account-circle text-light',
+      username: player.name,
+      loadoutClass: classData.name,
+      loadoutSpecialization: spe.name,
+      loadoutSpecializationIcon: spe.icon,
+      loadoutWeapon: weapon.name,
+      loadoutWeaponIcon: weapon.icon,
+      loadoutGadget1: gadgets[0].name,
+      loadoutGadget1Icon: gadgets[0].icon,
+      loadoutGadget2: gadgets[1].name,
+      loadoutGadget2Icon: gadgets[1].icon,
+      loadoutGadget3: gadgets[2].name,
+      loadoutGadget3Icon: gadgets[2].icon,
+    })
   }
 
   function playerFromString(value: string): PublicPlayerType {
@@ -177,7 +191,7 @@ if (roomCode) {
 
     if (publicId) {
       const player = players[publicId]
-      document.documentElement.classList.toggle('isAdmin', !!player?.isMaster)
+      document.documentElement.classList.toggle('isAdmin', Boolean(player?.isMaster))
     }
   }
 

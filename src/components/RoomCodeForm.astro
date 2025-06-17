@@ -16,7 +16,7 @@ const roomCode = url.searchParams.get('room') ?? ''
       autocorrect="off"
       spellcheck="false"
       value={roomCode}
-      disabled={!!roomCode}
+      disabled={Boolean(roomCode)}
     />
     {
       !roomCode && (
