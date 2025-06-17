@@ -1,24 +1,23 @@
 <template id="loadout-card-template">
   <div id="[publicId]" class="card [class] relative">
     <div
-      class="parent.isOnline:bg-green parent.isAfk:bg-orange size-4 animate-pulse absolute top-2 right-2 rounded-full"
-    >
-    </div>
+      class="status-dot size-4 animate-pulse absolute top-2 right-2 rounded-full"
+    />
 
     <div class="absolute right-2 bottom-2 flex flex-col gap-2 items-center justify-end">
       <div
-        class="i-material-symbols:delete-outline-sharp hidden size-7 text-error parent.isAdmin:block !parent.isCurrent:hidden cursor-pointer"
+        class="i-material-symbols:delete-outline-sharp hidden size-7 text-error admin-button cursor-pointer"
         onclick="removePlayer('[publicId]')"
       />
       <div
-        class="i-material-symbols:refresh-sharp hidden size-7 text-accent parent.isAdmin:block cursor-pointer"
+        class="i-material-symbols:refresh-sharp hidden size-7 text-accent admin-button cursor-pointer"
         onclick="generatePlayer('[publicId]')"
       />
     </div>
 
     <div class="flex items-center gap-2">
       <div class="[icon] size-8"></div>
-      <h3 class="text-2xl capitalize not-italic parent.isCurrent:text-accent parent.notCurrent:(text-light underline underline-accent)">
+      <h3 class="text-2xl capitalize not-italic username">
         [username]
       </h3>
     </div>
@@ -26,7 +25,7 @@
     <div class="border-b my-2 mx-2"></div>
 
     <div class="flex items-center gap-3">
-      <h4 class="text-xl parent.isCurrent:text-accent">[loadoutClass]</h4>
+      <h4 class="text-xl loadoutClass">[loadoutClass]</h4>
       -
       <div class="flex items-center gap-2">
         <i class="[loadoutSpecializationIcon]" />
@@ -49,3 +48,29 @@
     </div>
   </div>
 </template>
+
+<style>
+  @reference "../styles/global.css";
+
+  .isOnline .status-dot {
+    @apply bg-green-500;
+  }
+  .isAfk .status-dot {
+    @apply bg-orange-500;
+  }
+  .isAdmin .admin-button {
+    @apply block;
+  }
+  .isCurrent .admin-button {
+    @apply !hidden;
+  }
+  .isCurrent .username, .isCurrent .loadoutClass {
+    @apply text-accent;
+  }
+  .notCurrent .username {
+    @apply text-light underline decoration-accent;
+  }
+  .notCurrent .username {
+    @apply text-light underline decoration-accent;
+  }
+</style>

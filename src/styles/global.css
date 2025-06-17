@@ -1,0 +1,195 @@
+@import url('https://fonts.googleapis.com/css2?family=Saira:ital,wght@0,400;0,500;0,700;0,900;1,400;1,500;1,700;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap');
+
+@import 'tailwindcss';
+
+@custom-variant dark (&:where(.dark, .dark *));
+@custom-variant light (&:where(.light, .light *));
+
+@theme {
+  --font-sans: 'Saira', 'sans-serif';
+}
+
+:root {
+  --hue: 280;
+  --color--dark: oklch(20% 0 0);
+  --color--light: oklch(90% 0 0);
+  --color--primary: oklch(75% 0.2 var(--hue));
+  --color--accent: oklch(70% 0.25 var(--hue));
+  --color--card: oklch(30.5% 0 0);
+  --color--error: oklch(80% 0.35 calc(var(--hue) - 180));
+}
+
+.light:root {
+  --hue: 280;
+  --color--dark: oklch(94% 0 0);
+  --color--light: oklch(24% 0 0);
+  --color--primary: oklch(50% 0.15 var(--hue));
+  --color--accent: oklch(45% 0.3 var(--hue));
+  --color--card: oklch(85% 0 0);
+  --color--error: oklch(60% 0.25 calc(var(--hue) - 180));
+}
+
+@theme inline {
+  --color-dark: var(--color--dark);
+  --color-light: var(--color--light);
+  --color-primary: var(--color--primary);
+  --color-accent: var(--color--accent);
+  --color-card: var(--color--card);
+  --color-error: var(--color--error);
+}
+
+::view-transition-group(root) {
+  animation-timing-function: var(--expo-in);
+}
+
+::view-transition-new(root) {
+  mask: url('https://media.tenor.com/Jz0aSpk9VIQAAAAi/i-love-you-love.gif') center / 0 no-repeat;
+  animation: scale 1.5s;
+}
+
+::view-transition-old(root),
+.dark::view-transition-old(root) {
+  animation: scale 1.5s;
+}
+
+@keyframes scale {
+  0% {
+    mask-size: 0;
+  }
+  10% {
+    mask-size: 50vmax;
+  }
+  90% {
+    mask-size: 50vmax;
+  }
+  100% {
+    mask-size: 2000vmax;
+  }
+}
+
+:root {
+  --expo-in: linear(
+    0 0%,
+    0.0085 31.26%,
+    0.0167 40.94%,
+    0.0289 48.86%,
+    0.0471 55.92%,
+    0.0717 61.99%,
+    0.1038 67.32%,
+    0.1443 72.07%,
+    0.1989 76.7%,
+    0.2659 80.89%,
+    0.3465 84.71%,
+    0.4419 88.22%,
+    0.554 91.48%,
+    0.6835 94.51%,
+    0.8316 97.34%,
+    1 100%
+  );
+  --expo-out: linear(
+    0 0%,
+    0.1684 2.66%,
+    0.3165 5.49%,
+    0.446 8.52%,
+    0.5581 11.78%,
+    0.6535 15.29%,
+    0.7341 19.11%,
+    0.8011 23.3%,
+    0.8557 27.93%,
+    0.8962 32.68%,
+    0.9283 38.01%,
+    0.9529 44.08%,
+    0.9711 51.14%,
+    0.9833 59.06%,
+    0.9915 68.74%,
+    1 100%
+  );
+}
+
+@utility pixel-backdrop-* {
+  @apply relative;
+  &:after {
+    background-color: --value(--color- *);
+    @apply size-full absolute top-2 left-2 -z-2;
+  }
+}
+
+@utility cut-bl-* {
+  clip-path: polygon(
+    0 0,
+    0 calc(100% - --value(number)),
+    --value(number) 100%,
+    100% 100%,
+    calc(100% - --value(number)) calc(100% - --value(number)),
+    0 0
+  );
+}
+
+@utility cut-tr-* {
+  clip-path: polygon(
+    0 0,
+    calc(100% - --value(number)) 0,
+    100% --value(number),
+    100% 100%,
+    calc(100% - --value(number)) calc(100% - --value(number)),
+    0 0
+  );
+}
+
+button {
+  cursor: pointer;
+}
+
+.html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color--primary) var(--color--card);
+
+  @apply font-sans;
+}
+
+.content-wrapper {
+  @apply container px-6 mx-auto;
+}
+
+.link {
+  @apply relative text-xl border-solid;
+  @apply text-light hover:text-primary transition-colors duration-300;
+
+  &:after {
+    @apply h-px w-0 bg-primary absolute bottom-0.5 inset-x-0 inline-block transition-[width] duration-300;
+    @apply hover:w-full;
+  }
+}
+
+.h1 {
+  @apply text-2xl;
+}
+
+.input {
+  @apply px-4 py-1.5 w-full text-dark placeholder:text-card placeholder:font-light font-medium bg-light border-none outline-none disabled:bg-card disabled:text-white;
+}
+
+.btn {
+  @apply bg-primary px-5 py-1.5 h-fit text-dark hover:bg-light uppercase;
+}
+
+.card {
+  @apply relative light:bg-card bg-card px-4 py-2 pixel-backdrop-light;
+}
+
+.label {
+  @apply text-lg font-medium;
+}
+
+.backdrop {
+  @apply relative;
+
+  &:before {
+    @apply bg-light size-[calc(100%_+_.5rem)] absolute top-0 left-0 -z-2 cut-tr-8;
+  }
+
+  &:after {
+    @apply bg-light opacity-20 size-[calc(100%_+_.5rem)] absolute top-0 left-0 -z-2 cut-bl-8;
+  }
+}
