@@ -1,4 +1,4 @@
-interface ItemType { name: string, icon: string }
+interface ItemType { name: string, icon?: string }
 
 // ! GADGETS
 export const gadgets = {

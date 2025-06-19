@@ -52,10 +52,8 @@
     "github-actions-workflow"
   ],
 
-  "conventionalCommits.scopes": [
-    "eslint",
-    "doc",
-    "workflow",
-    "npm"
-  ]
+  "files.associations": {
+    "*.embeddedhtml": "html",
+    "*.css": "tailwindcss"
+  }
 }
